@@ -1,0 +1,60 @@
+Help files available in the BGT\Help directory.
+-------------------------------------------------------------------------
+Baldur’s Gate Trilogy - WeiDU (BGT-WeiDU)
+Version 1.13 (22 Jan 12)
+[with permission from Bardez]
+
+IMPORTANT! All savegames of BGT-WeiDU version 1.12 or below are rendered incompatible with this update. You must start a new game.
+
+REQUIREMENTS
+
+BGT-WeiDU requires the following:
+- A Custom Install (with all checkboxes ticked) of Baldur’s Gate I and Tales of the Sword Coast, patched to version 5512
+(clean install - DO NOT INSTALL BALDURDASH ON YOUR BALDUR’S GATE: TALES OF THE SWORD COAST INSTALLATION, or anything else on it for that matter. If you receive a warning about insufficient disk space during installation, and have checked that you actually do have enough disk space, then ignore the warning.)
+  OR
+- A Custom Install (with all checkboxes ticked) of Baldur’s Gate: The Original Saga
+(clean install - DO NOT INSTALL BALDURDASH ON YOUR BALDUR’S GATE: TALES OF THE SWORD COAST INSTALLATION, or anything else on it for that matter. If you receive a warning about insufficient disk space during installation, and have checked that you actually do have enough disk space, then ignore the warning.)
+  AND
+- A Full Install of Baldur’s Gate II: Shadows of Amn and Baldur’s Gate II: Throne of Bhaal, patched to version 26498 (can have existing modifications installed; see FAQ section for details)
+
+Disk Space Required: BGT-WeiDU requires 2.5 GB of free disk space. However, 3.0 GB is required for the installation process, not including the standalone Baldur’s Gate and Tales of the Sword Coast installation. For virtual memory purposes, at least 4.0 GB of free disk space is recommended.
+
+INSTALLATION
+1. Extract this file to your Baldur's Gate II install directory
+2. IMPORTANT! Ensure that no Baldur’s Gate-related CDs/DVDs/virtual images are in any of your CD/DVD/virtual drives. Failure to do this will likely result in errors during installation.
+3. It is recommended that you disable virus scanners, spyware scanners, and other background on-the-fly file scanners during the installation of Baldur’s Gate Trilogy-WeiDU. These programs have been known in some cases to interfere with the installation process.
+4. Run Setup-BGT.exe in your Baldur's Gate II install directory and follow the installation prompts. The installation checks that the Baldur's Gate I installation directory you typed contains a full custom installation of Baldur's Gate and Tales of the Sword Coast. If the installation needs to be aborted to correct your Baldur's Gate I installation, you can safely close the installation window or press Ctrl+C
+5. Play Baldur’s Gate II - click the Baldur’s Gate button, then New Game to start Baldur’s Gate I
+6. You may uninstall Baldur’s Gate I and Tales of the Sword Coast if desired - if you think you need a re-install, do NOT complete this step
+
+NOTE: If you are installing this as part of the mega-modification, install this after all modifications that are part of the mega-modification (The Darkest Day, Shadows over Soubar, Tortured Souls). See Frequently Asked Questions for more details.
+
+UNINSTALLATION AND REINSTALLATION
+1. Run Setup-BGT.exe in your Baldur's Gate II install directory and follow the installation prompts
+2. When prompted after uninstallation, restore the backup of dialog.tlk, found in the directory <BGII install directory>\BGT\dialog.bak
+
+AUTO-INSTALLATION (for expert users)
+1. Extract this file to your Baldur's Gate II install directory
+2. IMPORTANT! Ensure that no Baldur’s Gate-related CDs/DVDs/virtual images are in any of your CD/DVD/virtual drives. Failure to do this will likely result in errors during installation.
+3. It is recommended that you disable virus scanners, spyware scanners, and other background on-the-fly file scanners during the installation of Baldur’s Gate Trilogy-WeiDU. These programs have been known in some cases to interfere with the installation process.
+4. Go to the command line, navigate to <BGII install directory>, and execute Setup-BGT.exe using the construction below. Alternatively, place the construction in a batch file or the Run... dialog in the Start menu.
+
+Setup-BGT.exe --force-install 0 --skip-at-view --language X --args-list [flags] [path]
+
+Parameters:
+X - English (0), International English (1), Castilian/Spanish (2), French (3), German (4), Italian (5), Korean (6), Polish (7), Russian (8), Simplified Chinese (9), Traditional Chinese (10)
+
+[flags]
+- suppress prompt for biffing option and biff all new resources (takes precedence over 'o' flag) (b or B)
+- suppress prompt for biffing option and biff select resources (recommended for mega-modification installations) (o or O)
+- Suppress display of Post-installation Notes at the end of the installation (s or S)
+- Pre-define the full path to the Baldur’s Gate and Tales of the Sword Coast directory; if the path is invalid, setup will prompt for a valid path (p or P)
+
+[path]
+- the full path, in quotes, to your Baldur’s Gate and Tales of the Sword Coast installation directory, used in conjunction with the p or P flag
+
+Example:
+Setup-BGT.exe --force-install 0 --skip-at-view --language 0 --args-list sp "C:\Program Files\Black Isle\Baldur's Gate"
+Installs BGT-WeiDU with the English language, suppresses display of Post-installation Notes at the end of the installation, and pre-defines the Baldur’s Gate and Tales of the Sword Coast directory as C:\Program Files\Black Isle\Baldur’s Gate.
+
+5. The auto-installation checks that the Baldur's Gate I installation directory you specified contains a full custom installation of Baldur's Gate and Tales of the Sword Coast. If the directory you specified is invalid or contains an incorrect installation of Baldur's Gate and Tales of the Sword Coast, installation will prompt for the correct directory. If the installation needs to be aborted to correct your Baldur's Gate I installation, you can safely close the installation window or press Ctrl+C.
