@@ -39,7 +39,7 @@
 @203404 = ~Dejadme aquí. Ya... ya no me quedan fuerzas. Dejad que esos bastardos del Puño Llameante se encarguen de mí. Ya no me importa.~
 
 //SAREVO.D - replaces a reference to Angelo who isn't actually in the Duchal Palace
-@203405 = ~Esas personas están en busca y captura por los múltiples asesinatos que han cometido, ¡MATADLAS!~
+@203405 = ~Esas personas son buscadas y deben ser capturaas por los múltiples asesinatos que han cometido, ¡MATADLAS!~
 
 //VOLETA.D
 @203406 = ~Habéis vuelto. Sinceramente no me lo esperaba; nunca nadie había atravesado este laberinto con anterioridad. Al menos parece que ese maldito bastardo y su séquito han sido eliminados.~
@@ -60,7 +60,7 @@
 @204008   = ~Invisibilidad (Ilusión)~
 @204009   = ~Abrir cerradura (Alteración)~
 @204010   = ~Conocer alineamiento (Adivinación)~
-@204011   = ~Suerte (Encantación)~
+@204011   = ~Suerte (Encantamiento)~
 @204012   = ~Resistir miedo (Abjuración)~
 @204013   = ~Flecha ácida de Melf (Conjuración)~
 @204014   = ~Imagen espejada (Ilusión)~
@@ -71,7 +71,7 @@
 @204019   = ~Toque de Ghoul (Nigromancia)~
 @204020   = ~Vocalizar (Alteración)~
 @204021   = ~Palabra de poder, Dormir (Conjuración)~
-@204022   = ~Rayo de debilitamiento (Encantación)~
+@204022   = ~Rayo de debilitamiento (Encantamiento)~
 @204023   = ~Escudo de caos* (Abjuración)~
 @204024   = ~Sordera (Ilusión)~
 @204025   = ~Partículas rutilantes (Conjuración)~
@@ -79,25 +79,25 @@
 @204027   = ~Elige la especialidad Nivel 3 para <CHARNAME>, o cualquier hechizo para Mago Salvaje.~
 @204028   = ~(Hechizos de nivel 3)~
 @204029   = ~Clarividencia (Adivinación)~
-@204030   = ~Removee magia (Abjuración)~
+@204030   = ~Remover magia (Abjuración)~
 @204031   = ~Flecha de fuego (Conjuración)~
 @204032   = ~Bola de fuego (Invocación)~
 @204033   = ~Celeridad (Alteración)~
-@204034   = ~Inmovilizar persona (Encantación)~
+@204034   = ~Inmovilizar persona (Encantamiento)~
 @204035   = ~Invisibilidad radio 10 (Ilusión)~
 @204036   = ~Rayo relampagueante (Invocación)~
-@204037   = ~Convocar monstruo I (Conjuración)~
+@204037   = ~Convocar monstruos I (Conjuración)~
 @204038   = ~No Detección (Abjuración)~
 @204039   = ~Protección de los misiles normales (Abjuración)~
 @204040   = ~Enlentecer (Alteración)~
 @204041   = ~Trampa calavera (Nigromancia)~
 @204042   = ~Toque vampírico (Nigromancia)~
-@204043   = ~Encantar (Encantación)~
+@204043   = ~Encantar (Encantamiento)~
 @204044   = ~Armadura fantasmal (Conjuración)~
 @204045   = ~Desvío de hechizos menor (Abjuración)~
 @204046   = ~Protección contra el fuego (Abjuración)~
 @204047   = ~Protección contra el frío (Abjuración)~
-@204048   = ~Spell Thrust (Abjuración)~
+@204048   = ~Impulsar/Desviación (Abjuración)~
 @204049   = ~Detectar Ilusión (Adivinación)~
 @204050   = ~Inmovilizar no muerto (Nigromancia)~
 @204051   = ~Meteoros de Melf (Invocación)~
@@ -105,27 +105,27 @@
 @204053   = ~Elige cinco hechizos de nivel 3 para <CHARNAME>.~
 @204054   = ~Elige la especialidad Nivel 4 para <CHARNAME>, o cualquier hechizo para Mago Salvaje.~
 @204055   = ~(Hechizos de nivel 4)~
-@204056   = ~Confusión (Encantación)~
+@204056   = ~Confusión (Encantamiento)~
 @204057   = ~Escudo de fuego (Azul) (Invocación)~
 @204058   = ~Tormenta de hielo (Invocación)~
 @204059   = ~Invisibilidad mejorada (Ilusión)~
 @204060   = ~Globo menor de invulnerabilidad (Abjuración)~
-@204061   = ~Convocar monstruo II (Conjuración)~
+@204061   = ~Convocar monstruos II (Conjuración)~
 @204062   = ~Piel pétrea (Alteración)~
 @204063   = ~Contagio (Nigromancia)~
 @204064   = ~Quitar maldición (Abjuración)~
-@204065   = ~Emoción (Encantación)~
-@204066   = ~Gran enfermedad (Encantación)~
+@204065   = ~Emoción (Encantamiento)~
+@204066   = ~Gran enfermedad (Encantamiento)~
 @204067   = ~Esfera de Otiluke (Alteración)~
 @204068   = ~Armadura espiritual (Nigromancia)~
 @204069   = ~Polimorfar a otro (Alteración)~
 @204070   = ~Polimorfar uno mismo (Alteración)~
-@204071   = ~Arma encantada (Encantación)~
+@204071   = ~Arma encantada (Encantamiento)~
 @204072   = ~Escudo de fuego (Rojo) (Invocación)~
 @204073   = ~Palabra secreta (Abjuración)~
 @204074   = ~Secuenciador menor (Invocación)~
 @204075   = ~Campo de teletransportación (Alteración)~
-@204076   = ~Comjurar araña (Conjuración)~
+@204076   = ~Conjurar araña (Conjuración)~
 @204077   = ~Visión lejana (Adivinación)~
 @204078   = ~Ojo de mago (Adivinación/Alteración)~
 @204079   = ~Elige cinco hechizos de nivel 4 para <CHARNAME>.~

@@ -21,7 +21,7 @@ BACKUP ~bgt/backup~
 
 AUTHOR ~http://forums.spellholdstudios.net/index.php?showforum=261~
 
-VERSION ~1.13 (22 Jan 12)~
+VERSION ~1.14 (28 Jan 12)~
 
 README ~bgt/help/[%LANGUAGE%]bgtreadme.htm~ ~bgt/help/[english]bgtreadme.htm~
 
@@ -8796,7 +8796,8 @@ COPY ~music/harp_v2/harp_v21c.acm~ ~music/harp_v2/harp_v2c.acm~
 PRINT ~~
 PRINT @100034
 
-ACTION_IF ( ~%LANGUAGE%~ STRING_COMPARE_CASE ~french~ ) = 0 THEN BEGIN
+ACTION_IF (~%LANGUAGE%~ STRING_EQUAL_CASE ~french~ AND
+           FILE_EXISTS ~%bg1_dir%/sounds/femme1a.wav~) THEN BEGIN
   COPY ~%bg1_dir%/sounds/femme1a.wav~ ~sounds/bgfeml1a.wav~
        ~%bg1_dir%/sounds/femme1b.wav~ ~sounds/bgfeml1b.wav~
        ~%bg1_dir%/sounds/femme1c.wav~ ~sounds/bgfeml1c.wav~
@@ -8876,7 +8877,8 @@ ACTION_IF ( ~%LANGUAGE%~ STRING_COMPARE_CASE ~french~ ) = 0 THEN BEGIN
        ~%bg1_dir%/sounds/homme3l.wav~ ~sounds/bgmale3l.wav~
        ~%bg1_dir%/sounds/homme3m.wav~ ~sounds/bgmale3m.wav~
 END ELSE BEGIN
-ACTION_IF ( ~%LANGUAGE%~ STRING_COMPARE_CASE ~german~ ) = 0 THEN BEGIN
+ACTION_IF (~%LANGUAGE%~ STRING_EQUAL_CASE ~german~ AND
+           FILE_EXISTS ~%bg1_dir%/sounds/frau1a.wav~) THEN BEGIN
   COPY ~%bg1_dir%/sounds/frau1a.wav~ ~sounds/bgfeml1a.wav~
        ~%bg1_dir%/sounds/frau1b.wav~ ~sounds/bgfeml1b.wav~
        ~%bg1_dir%/sounds/frau1c.wav~ ~sounds/bgfeml1c.wav~
@@ -8956,7 +8958,8 @@ ACTION_IF ( ~%LANGUAGE%~ STRING_COMPARE_CASE ~german~ ) = 0 THEN BEGIN
        ~%bg1_dir%/sounds/mann3l.wav~ ~sounds/bgmale3l.wav~
        ~%bg1_dir%/sounds/mann3m.wav~ ~sounds/bgmale3m.wav~
 END ELSE BEGIN
-ACTION_IF ( ~%LANGUAGE%~ STRING_COMPARE_CASE ~castilian~ ) = 0 THEN BEGIN
+ACTION_IF (~%LANGUAGE%~ STRING_EQUAL_CASE ~castilian~ AND
+           FILE_EXISTS ~%bg1_dir%/sounds/hembra1a.wav~) THEN BEGIN
   COPY ~%bg1_dir%/sounds/hembra1a.wav~ ~sounds/bgfeml1a.wav~
        ~%bg1_dir%/sounds/hembra1b.wav~ ~sounds/bgfeml1b.wav~
        ~%bg1_dir%/sounds/hembra1c.wav~ ~sounds/bgfeml1c.wav~
@@ -9036,7 +9039,8 @@ ACTION_IF ( ~%LANGUAGE%~ STRING_COMPARE_CASE ~castilian~ ) = 0 THEN BEGIN
        ~%bg1_dir%/sounds/varon3l.wav~ ~sounds/bgmale3l.wav~
        ~%bg1_dir%/sounds/varon3m.wav~ ~sounds/bgmale3m.wav~
 END ELSE BEGIN
-ACTION_IF ( ~%LANGUAGE%~ STRING_COMPARE_CASE ~polish~ ) = 0 THEN BEGIN
+ACTION_IF (~%LANGUAGE%~ STRING_EQUAL_CASE ~castilian~ AND
+           FILE_EXISTS ~%bg1_dir%/sounds/ona1a.wav~) THEN BEGIN
   COPY ~%bg1_dir%/sounds/ona1a.wav~ ~sounds/bgfeml1a.wav~
        ~%bg1_dir%/sounds/ona1b.wav~ ~sounds/bgfeml1b.wav~
        ~%bg1_dir%/sounds/ona1c.wav~ ~sounds/bgfeml1c.wav~
@@ -9116,6 +9120,7 @@ ACTION_IF ( ~%LANGUAGE%~ STRING_COMPARE_CASE ~polish~ ) = 0 THEN BEGIN
        ~%bg1_dir%/sounds/on3l.wav~ ~sounds/bgmale3l.wav~
        ~%bg1_dir%/sounds/on3m.wav~ ~sounds/bgmale3m.wav~
 END ELSE BEGIN
+ACTION_IF (FILE_EXISTS ~%bg1_dir%/sounds/female1a.wav~) THEN BEGIN
   COPY ~%bg1_dir%/sounds/female1a.wav~ ~sounds/bgfeml1a.wav~
        ~%bg1_dir%/sounds/female1b.wav~ ~sounds/bgfeml1b.wav~
        ~%bg1_dir%/sounds/female1c.wav~ ~sounds/bgfeml1c.wav~
@@ -9194,6 +9199,7 @@ END ELSE BEGIN
        ~%bg1_dir%/sounds/male3k.wav~ ~sounds/bgmale3k.wav~
        ~%bg1_dir%/sounds/male3l.wav~ ~sounds/bgmale3l.wav~
        ~%bg1_dir%/sounds/male3m.wav~ ~sounds/bgmale3m.wav~
+END //other
 END //polish
 END //castilian
 END //german
@@ -9552,7 +9558,7 @@ AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp -
 AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area3100 --biff-get-rest ar42.*bmp ar42.*mos ar42.*wed ar42.*tis~ //KEEP_CASE
 AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area3200 --biff-get-rest ar43.*bmp ar43.*mos ar43.*wed ar43.*tis~ //KEEP_CASE
 AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area3300 --biff-get-rest ar44.*bmp ar44.*mos ar44.*wed ar44.*tis~ //KEEP_CASE
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area3400 --biff-get-rest ar45.*bmp ar45.*mos ar45.*wed ar45.*tis~ //KEEP_CASE
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area3400 --biff-get-rest ar4500.*bmp ar4500.*mos ar4500.*wed ar4500.*tis~ //KEEP_CASE
 AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area3500 --biff-get-rest ar46.*bmp ar46.*mos ar46.*wed ar46.*tis~ //KEEP_CASE
 AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area3600 --biff-get-rest ar47.*bmp ar47.*mos ar47.*wed ar47.*tis~ //KEEP_CASE
 AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area3700 --biff-get-rest ar48.*bmp ar48.*mos ar48.*wed ar48.*tis~ //KEEP_CASE
@@ -9609,6 +9615,7 @@ AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp -
 AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area8300 --biff-get-rest ar14.*bmp ar14.*mos ar14.*wed ar14.*tis~ //KEEP_CASE
 AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area8400 --biff-get-rest ar16.*bmp ar16.*mos ar16.*wed ar16.*tis~ //KEEP_CASE
 AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area8500 --biff-get-rest ar17.*bmp ar17.*mos ar17.*wed ar17.*tis~ //KEEP_CASE
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area8500 --biff-get-rest ar4501.*bmp ar4501.*mos ar4501.*wed ar4501.*tis~ //KEEP_CASE
 AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area8600 --biff-get-rest ar18.*bmp ar18.*mos ar18.*wed ar18.*tis~ //KEEP_CASE
 AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area8700 --biff-get-rest ar19.*bmp ar19.*mos ar19.*wed ar19.*tis~ //KEEP_CASE
 AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area8800 --biff-get-rest ar21.*bmp ar21.*mos ar21.*wed ar21.*tis~ //KEEP_CASE
@@ -9685,22 +9692,6 @@ END
 
 MOVE + ~aread000/ar0506ac.tis~ ~aread000/ard006ac.tis~
        ~aread000/ar0506ao.tis~ ~aread000/ard006a0.tis~
-
-//duplicate ar3401 -> ar8501
-COPY + ~area3400/ar3401ht.bmp~ ~area8500/ar8501ht.bmp~
-       ~area3400/ar3401lm.bmp~ ~area8500/ar8501lm.bmp~
-       ~area3400/ar3401sr.bmp~ ~area8500/ar8501sr.bmp~
-       ~area3400/ar3401.mos~ ~area8500/ar8501.mos~
-COPY_LARGE + ~area3400/ar3401.tis~ ~area8500/ar8501.tis~
-COPY + ~area3400/ar3401.wed~ ~area8500/ar8501.wed~
-  READ_LONG 0x10 overlay_off
-  READ_LONG 0x8 overlay_num
-  FOR (i = 0; i < %overlay_num%; i += 1) BEGIN
-    READ_ASCII (%overlay_off% + %i% * 0x18 + 0x4) overlay_tilref
-    PATCH_IF ("%overlay_tilref%" STRING_EQUAL_CASE "ar3401") BEGIN
-      WRITE_ASCII (%overlay_off% + %i% * 0x18 + 0x4) "ar8501"
-    END
-  END
 
 ACTION_IF ("%WEIDU_OS%" STRING_COMPARE_CASE ~win32~ = 0) BEGIN
   AT_NOW ~bgt\install\win32\deltis2.bat %debug%~ EXACT

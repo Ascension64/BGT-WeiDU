@@ -238,7 +238,7 @@
 /tmp/bgt-weidu/tis2bg2 area8400/ar1602 area8400/ar8402 -d 2>>bgt/bash.debug | tee -a bgt/bash.debug
 /tmp/bgt-weidu/tis2bg2 area8400/ar1603 area8400/ar8403 -d 2>>bgt/bash.debug | tee -a bgt/bash.debug
 /tmp/bgt-weidu/tis2bg2 area8500/ar1700 area8500/ar8500 -d 2>>bgt/bash.debug | tee -a bgt/bash.debug
-#/tmp/bgt-weidu/tis2bg2 area8500/ar1701 area8500/ar8501 -d 2>>bgt/bash.debug | tee -a bgt/bash.debug
+/tmp/bgt-weidu/tis2bg2 area8500/ar4501 area8500/ar8501 -d 2>>bgt/bash.debug | tee -a bgt/bash.debug
 /tmp/bgt-weidu/tis2bg2 area8600/ar1800 area8600/ar8600 -d 2>>bgt/bash.debug | tee -a bgt/bash.debug
 /tmp/bgt-weidu/tis2bg2 area8600/ar1801 area8600/ar8601 -d 2>>bgt/bash.debug | tee -a bgt/bash.debug
 /tmp/bgt-weidu/tis2bg2 area8600/ar1802 area8600/ar8602 -d 2>>bgt/bash.debug | tee -a bgt/bash.debug

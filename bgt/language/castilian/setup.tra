@@ -11,12 +11,13 @@ Incluso las hordas tienen héroes, y aunque sean vilipendiados en la civilización
 CARACTERÍSTICAS:
 
 Daño: 1D6 +3
-GAC0: bonificador +2
+THAC0: bonificador +2
 Tipo de daño: contundente
 Peso: 7 lbs
 Factor de velocidad: 5
 Talento marcial: maza
 Tipo: a una mano
+
 No permitido a:
  Druida
  Mago
@@ -30,11 +31,12 @@ Enfrentados por años de rivalidad, los duques de Spandeliyon y Delthuntle decidi
 CARACTERÍSTICAS:
 
 Daño: +2 (proyectil)
-GAC0: bonificador +3
+THAC0: bonificador +3
 Peso: 2 lbs
 Factor de velocidad: 5
 Talento marcial: arco largo
 Tipo: a dos manos
+
 No permitido a:
  Druida
  Clérigo
@@ -49,11 +51,12 @@ Con el fin de proteger su comunidad de un campamento invasor de orcos leñadores,
 CARACTERÍSTICAS:
 
 Daño: +2 (proyectil)
-GAC0: bonificador +2
+THAC0: bonificador +2
 Peso: 2 lbs
 Factor de velocidad: 4
 Talento marcial: arco corto
 Tipo: a dos manos
+
 No permitido a:
  Druida
  Clérigo
@@ -62,17 +65,18 @@ No permitido a:
 //@20885 - change Small Sword to Dagger
 @200004 = ~Daga de plata: "Perdición de licántropos"
 
-Esta sencilla daga mágica aumenta por cuatro su poder cuanto se utiliza contra los licántropos. Fue forjada por Dynala Manodeoro, una exploradora elfa que deseaba librar a su patria de la amenaza de los hombres chacal. Fue asesinada mientras rastreaba a su líder por una tribu de orcos en las montañas de los Picos Nublados.
+Esta sencilla daga mágica aumenta por cuatro su poder cuanto se utiliza contra los licántropos. Fue forjada por Dynala Manodeoro, una exploradora elfa que deseaba librar a su patria de la amenaza de los hombres Lobo. Fue asesinada mientras rastreaba a su líder por una tribu de orcos en las montañas de los Picos Nublados.
 
 CARACTERÍSTICAS:  
 
 Daño: 1D4 +1 (+4 contra licántropos)
-GAC0: bonificador +1 (+4 contra licántropos)
+THAC0: bonificador +1 (+4 contra licántropos)
 Tipo de daño: perforante
 Peso: 1 lbs
 Factor de velocidad: 2
 Talento marcial: daga
 Tipo: a una mano
+
 No permitido a:
  Clérigo~
 
@@ -82,12 +86,13 @@ No permitido a:
 CARACTERÍSTICAS:
 
 Daño: 2D4
-GAC0: bonificador +4 contra licántropos
+THAC0: bonificador +4 contra licántropos
 Tipo de daño: cortante
 Peso: 12 lbs
 Factor de velocidad: 7
 Talento marcial: espada bastarda
 Tipo: a una mano
+
 No permitido a:
  Druida
  Clérigo
@@ -248,7 +253,7 @@ Pantallas de menú
 
 Y ahora las escenas divertidas
 
-QUOTES (a lo Ultima)
+QUOTES (a lo Último)
 
 "No creo que los personajes de nivel dos necesiten hechizos de nivel seis."
 -Bardez, la primera vez que testeó el mod.
@@ -468,9 +473,9 @@ Otros agradecimientos especiales (nada que ver con relaciones):
 /*#15890 - change "dwarf from Mithral Hall" to "half-orc"*/
 @900000 = ~Sabéis poco sobre cómo llegasteis a la custodia de Gorion, pero a lo largo de los años habéis logrado reunir, a partir de sus vagas alusiones y de las palabras que a veces murmuraba en sueños en los que se les llenaban los ojos de lágrimas, alguna información sobre la historia de vuestra madre. Era una semiorca y amiga suya durante muchas estaciones. Como no la recordáis, ni poseéis objeto alguno que os recuerde su existencia, habéis llegado a creer que murió mientras os daba a luz. Quizás fue el dolor de su partida el que impulsó a Gorion a enclaustrarse en los angostos vestíbulos de Candelero y a educaros como si fuerais su propio hijo. Nada sabéis de vuestro padre.~ ~Sabéis poco sobre cómo llegasteis a la custodia de Gorion, pero a lo largo de los años habéis logrado reunir, a partir de sus vagas alusiones y de las palabras que a veces murmuraba en sueños en los que se les llenaban los ojos de lágrimas, alguna información sobre la historia de vuestra madre. Era una semiorca y amiga suya durante muchas estaciones. Como no la recordáis, ni poseéis objeto alguno que os recuerde su existencia, habéis llegado a creer que murió mientras os daba a luz. Quizás fue el dolor de su partida el que impulsó a Gorion a enclaustrarse en los angostos vestíbulos de Candelero y a educaros como si fuerais su propia hija. Nada sabéis de vuestro padre.~
 /*NOBW8.DLG - #8435; change last sentence to, 'I shall be here promptly every two days.'*/
-@900001 = ~¡¿Qué?! No sois mejor que... supongo que debí haberlo visto en vuestros ojos cuando nos conocimos por primera vez. Creo que estaba mejor con el malo conocido que con el bueno por conocer. Muy bien... poco puedo hacer para deteneros. Estaré aquí cada dos días.~
+@900001 = ~¿¡Qué!? No sois mejor que... supongo que debí haberlo visto en vuestros ojos cuando nos conocimos por primera vez. Creo que estaba mejor con el malo conocido que con el bueno por conocer. Muy bien... poco puedo hacer para deteneros. Estaré aquí cada dos días.~
 /*DELTHY.DLG - #1729; add extra sentence, 'Will you hear me out?'*/
-@900002 = ~Bien. Soy Delthyr; represento a los arpistas. He estado buscandoos durante semanas. Hace poco me enteré de que abandonasteis la ciudad. Desde que os fuisteis mucho ha cambiado, puedo contaroslo todo. ¿Deseáis escucharme?~
+@900002 = ~Bien. Soy Delthyr; represento a los arpistas. He estado buscandoos durante semanas. Hace poco me enteré de que abandonasteis la ciudad. Desde que os fuisteis mucho ha cambiado, puedo contároslo todo. ¿Deseáis escucharme?~
 
 @900037 = ~Introducción de Baldur's Gate~
 @900038 = ~Introducción de Shadows of Amn~

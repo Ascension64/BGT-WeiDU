@@ -20,6 +20,6 @@ END
 
 IF ~~ THEN BEGIN 4
   SAY @15796
-  IF ~~ THEN DO ~JoinParty()
-SetGlobal("IWasKickedOut","LOCALS",0)~ EXIT
+  IF ~~ THEN DO ~SetGlobal("IWasKickedOut","LOCALS",0)
+JoinParty()~ EXIT
 END

@@ -283,7 +283,7 @@ tis2bg2 area8400\ar1602 area8400\ar8402 -d
 tis2bg2 area8400\ar1603 area8400\ar8403 -d
 
 tis2bg2 area8500\ar1700 area8500\ar8500 -d
-::tis2bg2 area8500\ar1701 area8500\ar8501 -d
+tis2bg2 area8500\ar4501 area8500\ar8501 -d
 
 tis2bg2 area8600\ar1800 area8600\ar8600 -d
 tis2bg2 area8600\ar1801 area8600\ar8601 -d
