@@ -133,6 +133,27 @@ Kann nicht verwendet werden von:
 - Magiern
 - Mönchen~
 
+//@23965 - change Large Sword to Two Handed Sword
+@200006 = ~Der Rand der Welt
+
+Dies ist eine legendäre Waffe heroischer Proportionen, die vor allem in den nördlichsten Barbarenstämmen zu finden ist. Meister auf Meister hat diese Klinge gegen zahllose Feinde geschwungen, und das Blut, das mit diesem Schwert vergossen wurde, könnte ein kleines Meer füllen. Will man der Geschichte Glauben schenken, dann kann eine solche Klinge nicht geschmiedet worden sein, und jeder Besitzer scheint ihren Ursprung dem Mythos zuzuweisen, an den er gerade glaubt. Die grandioseste Entstehungsgeschichte ist wohl die eines großen Häuptlings, der zu den Kliffs segelte, die angeblich die Welt begrenzen. Dort griff er ins Leere und seine Willenskraft formte die Klinge aus dem Nichts. Was auch immer die Wahrheit sein mag: Gelangt das Schwert in die richtigen Hände, ist es eine Furcht erregende Waffe.
+
+EIGENSCHAFTEN:
+
+Schaden: 1W10 +3 (Klinge)
+ETW0-Bonus: -3
+Gewicht: 9
+Initiativefaktor: 7
+Mindeststärke: 13
+Fertigkeit: Zweihänder
+Typ: 2-händig
+
+Kann nicht verwendet werden von:
+ Klerikern
+ Druiden
+ Magiern
+ Dieben~
+
 ////////////////////////////////////////////////////////////////////
 // Spells
 ////////////////////////////////////////////////////////////////////

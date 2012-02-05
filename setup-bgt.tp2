@@ -21,7 +21,7 @@ BACKUP ~bgt/backup~
 
 AUTHOR ~http://forums.spellholdstudios.net/index.php?showforum=261~
 
-VERSION ~1.14 (28 Jan 12)~
+VERSION ~1.15 (5 Feb 12)~
 
 README ~bgt/help/[%LANGUAGE%]bgtreadme.htm~ ~bgt/help/[english]bgtreadme.htm~
 
@@ -43,7 +43,7 @@ LANGUAGE ~International English~
          ~bgt/language/english/scripts.tra~
 LANGUAGE ~Castellano (Castilian/Spanish)~
          ~castilian~
-         ~bgt/language/castilian/prompts.tra~
+         ~bgt/language/castilian/prompts-%WEIDU_OS%.tra~
          ~bgt/language/castilian/setup.tra~
          ~bgt/language/castilian/dialog.tra~
          ~bgt/language/castilian/journal.tra~
@@ -145,16 +145,11 @@ ACTION_IF "%WEIDU_OS%" STRING_COMPARE_CASE ~win32~ BEGIN //not Win32
   OUTER_SPRINT debug ~ 2>>bgt/bash.debug | tee -a bgt/bash.debug~
   OUTER_SPRINT slash ~/~
   OUTER_SPRINT quote ~"~
-  // if http://forums.pocketplane.net/index.php/topic,28028.msg328685.html#msg328685 will be implemented, following ACTION_IF can be removed (until next comment) and all KEEP_CASE in the .tp2 must be uncommented and replaced with the correct option /*
   ACTION_IF (~%WEIDU_OS%~ STRING_EQUAL_CASE ~unix~) BEGIN
-    OUTER_SPRINT test ~%WEIDU_EXECUTABLE%~
-    ACTION_TO_LOWER test
-    ACTION_IF ~%WEIDU_EXECUTABLE%~ STRING_COMPARE ~%test%~ BEGIN //path has capital letters
-      OUTER_SPRINT WEIDU_EXECUTABLE ~/tmp/bgt-weidu/weidu~
-      AT_NOW ~sh bgt/install/unix/casefix.sh%debug%~
-    END
+    AT_EXIT ~rm -f bgt/weidu~
+    AT_NOW ~ln -s "$(readlink -f "$(which "%WEIDU_EXECUTABLE%"|head -n 1)")" bgt/weidu 2>&1|tee -a bgt/bash.debug~ EXACT //fails if W_E is a relative path
+    OUTER_SPRINT WEIDU_EXECUTABLE ~bgt/weidu~
   END
-  // this is the end of the temporary part. When this is removed, you can also delete bgt/install/unix/casefix.sh */
 END ELSE BEGIN //Win32
   AT_EXIT ~del bgt\bash.debug~
   AT_NOW ~bgt/install/win32/vertest.bat~
@@ -462,7 +457,7 @@ PRINT ~~
 PRINT @100030
 
 MKDIR ~bg1cre~
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bg1cre --biff-get-rest ".*\.cre$"~ //KEEP_CASE
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bg1cre --biff-get-rest ".*\.cre$"~
 LAM bash_log
 
 //Overwriting with BG override CREs
@@ -536,7 +531,7 @@ PRINT ~~
 PRINT @100031
 
 ACTION_IF NOT FILE_EXISTS ~bgt/install/%LANGUAGE%/bg1.tra~ BEGIN
-  AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --traify-tlk --out bgt/bg1.tra~ //KEEP_CASE
+  AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --traify-tlk --out bgt/bg1.tra~
   LAM bash_log
   ACTION_IF (NOT FILE_EXISTS ~bgt/bg1.tra~) BEGIN
     FAIL @100015
@@ -3555,7 +3550,7 @@ COPY ~bgt/modify/itm/staf04.itm~ ~override/bgstaf04.itm~
 
 COPY ~bgt/modify/itm/sw2h07.itm~ ~override/bgsw2h07.itm~
   SAY NAME2 @23964
-  SAY IDENTIFIED_DESC @23965
+  SAY IDENTIFIED_DESC @200006
   WRITE_ASCII 0x3a ~BGISW2H7~
 
   READ_LONG 0x64 abil_off
@@ -8107,7 +8102,7 @@ LANGUAGE ~English~
          ~bgt/language/english/prompts.tra~
 LANGUAGE ~Castellano (Castilian/Spanish)~
          ~castilian~
-         ~bgt/language/castilian/prompts.tra~
+         ~bgt/language/castilian/prompts-%WEIDU_OS%.tra~
 LANGUAGE ~Francais (French)~
          ~french~
          ~bgt/language/french/prompts.tra~
@@ -8160,7 +8155,7 @@ SET_2DA_ENTRY  1 1 2    0   //CURRENT_ACTIVE_MOD_GUI
 ACTION_IF ~%WEIDU_OS%~ STRING_EQUAL_CASE ~win32~ BEGIN
   AT_EXIT ~Setup-GUI.exe --noautoupdate --skip-at-view --uninstall~ //This was not Unix-friendy
 END ELSE BEGIN
-  AT_EXIT ~"%WEIDU_EXECUTABLE%" setup-gui.tp2 --noautoupdate --no-auto-tp2 --autolog --logapp --skip-at-view --uninstall~ //KEEP_CASE
+  AT_EXIT ~"%WEIDU_EXECUTABLE%" setup-gui.tp2 --noautoupdate --no-auto-tp2 --autolog --logapp --skip-at-view --uninstall~
 END
 
 >>>>>>>>
@@ -8187,9 +8182,9 @@ COPY ~GUI_Mods/%gui_slot_name%~  ~override~
 >>>>>>>>
 
 DEFINE_ACTION_FUNCTION copy_missing STR_VAR origin=~~ destination=~~ BEGIN
-	ACTION_IF NOT FILE_EXISTS ~%destination%~ BEGIN
-		COPY ~%origin%~ ~%destination%~
-	END
+  ACTION_IF NOT FILE_EXISTS ~%destination%~ BEGIN
+    COPY ~%origin%~ ~%destination%~
+  END
 END
 
 //this block goes outside the IF because it must also solve problems of GUIs already installed but for Windows only.
@@ -8226,7 +8221,7 @@ ELSE BEGIN
 ~~~~~ACTION_IF ~#%#WEIDU_OS#%#~ STRING_EQUAL_CASE ~win32~ BEGIN
   AT_EXIT ~Setup-GUI.exe --noautoupdate --skip-at-view --uninstall~
 END ELSE BEGIN
-  AT_EXIT ~"#%#WEIDU_EXECUTABLE#%#" setup-gui.tp2 --noautoupdate --no-auto-tp2 --autolog --logapp --skip-at-view --uninstall~ //KEEP_CASE
+  AT_EXIT ~"#%#WEIDU_EXECUTABLE#%#" setup-gui.tp2 --noautoupdate --no-auto-tp2 --autolog --logapp --skip-at-view --uninstall~
 END~~~~~
     REPLACE_TEXTUALLY CASE_SENSITIVE EXACT_MATCH ~#%#~ ~%~ //otherwise, variables would be evaluated during BGT installation, instead of during GUI instalation.
     REPLACE_TEXTUALLY CASE_SENSITIVE EVALUATE_REGEXP "AUTHOR ~\([^~]*\)~" "AUTHOR ~\1 - non-windows version by Turambar.~"
@@ -8243,7 +8238,7 @@ LANGUAGE ~English~
          ~bgt/language/english/prompts.tra~
 LANGUAGE ~Castellano (Castilian/Spanish)~
          ~castilian~
-         ~bgt/language/castilian/prompts.tra~
+         ~bgt/language/castilian/prompts-%WEIDU_OS%.tra~
 LANGUAGE ~Francais (French)~
          ~french~
          ~bgt/language/french/prompts.tra~
@@ -9233,7 +9228,7 @@ COPY ~bgt/placeholder.txt~ ~sounds/mainf03.wav~
      ~bgt/placeholder.txt~ ~sounds/mainm38.wav~
      ~bgt/placeholder.txt~ ~sounds/mainm39.wav~
      
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out sounds --biff-get-rest main.*wav~ //KEEP_CASE
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out sounds --biff-get-rest main.*wav~
 LAM bash_log
 
 MOVE ~sounds/mainf03.wav~ ~sounds/bgmainfa.wav~
@@ -9273,30 +9268,30 @@ PRINT @100035
 
 MKDIR ~bgtwav~
 
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bgtwav --biff-get-rest abela.*wav ajant.*wav alats.*wav aldet.*wav alora.*wav amb_d08.*wav amb_e03.*wav amb_e04.*wav amb_e05.*wav amb_e06.*wav amb_e07.*wav amb_e08.*wav amb_e09.*wav amb_e10.*wav~ //KEEP_CASE
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bgtwav --biff-get-rest amb_e14.*wav amb_e15.*wav amb_e16.*wav amb_e17.*wav amb_e18.*wav amb_e19.*wav amb_e20.*wav amb_e21.*wav amb_e22.*wav amb_e23.*wav amb_e24.*wav amb_e25.*wav amb_e26.*wav amb_e28.*wav amb_e29.*wav~ //KEEP_CASE
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bgtwav --biff-get-rest amb_e31.*wav amb_e32.*wav amb_e33.*wav amb_e34.*wav amb_e40.*wav amb_e43.*wav~ //KEEP_CASE
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bgtwav --biff-get-rest amb_m.*wav amb_n.*wav amb_s.*wav amnso.*wav angel.*wav arden.*wav avalh.*wav bandt.*wav basil.*wav bassl.*wav edwin.*wav belan.*wav beltt.*wav bentl.*wav~ //KEEP_CASE
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bgtwav --biff-get-rest minsc.*wav imoen.*wav black.*wav brage.*wav branw.*wav~ //KEEP_CASE
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bgtwav --biff-get-rest brelk.*wav briel.*wav brunn.*wav bruns.*wav button1.wav cader.*wav caldo.*wav carrn10.wav cassn.*wav cast.*wav cattc.*wav centl.*wav chant.wav~ //KEEP_CASE
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bgtwav --biff-get-rest chant0.*wav chant2.wav chap.*wav choke.wav chromor.wav cldel.*wav coran.*wav~ //KEEP_CASE
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bgtwav --biff-get-rest crowd.wav culti.*wav dalto.*wav delai.*wav delor.*wav delsv.*wav drade.*wav~ //KEEP_CASE
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bgtwav --biff-get-rest dream.*wav drizt.*wav droth.*wav dryaa.*wav~ //KEEP_CASE
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bgtwav --biff-get-rest dunkn.*wav durly.*wav dynah.*wav eldot.*wav eltan.*wav emers.*wav entar.*wav error.*wav~ //KEEP_CASE
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bgtwav --biff-get-rest explosio.wav faldn.*wav festh.*wav flamn.*wav galkn.*wav gandl.*wav gantl.*wav garrk.*wav~ //KEEP_CASE
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bgtwav --biff-get-rest gatew.*wav gbasi.*wav gelln.*wav~ //KEEP_CASE
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bgtwav --biff-get-rest glanm.*wav gnarl.*wav gondp.*wav gonds.*wav gore.wav gorin.*wav greyw.*wav guide.*wav gulp.wav gwere.*wav hairt.*wav helsh.*wav hungn.*wav husam.*wav irlen.*wav~ //KEEP_CASE
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bgtwav --biff-get-rest intro01f.wav intro02f.wav intro03.wav introadd.wav~ //KEEP_CASE
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bgtwav --biff-get-rest ithmr.*wav jaher.*wav jebad.*wav jhass.*wav kagan.*wav kaish.*wav karou.*wav keepr.*wav keldt.*wav kestr.*wav khald.*wav~ //KEEP_CASE
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bgtwav --biff-get-rest kivan.*wav korax.*wav krumm01.wav krumm02.wav kryst.*wav liiaj.*wav~ //KEEP_CASE
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bgtwav --biff-get-rest lothr.*wav magmiss.wav malkl.*wav marek.*wav marll.*wav menda.*wav messn.*wav misc.*wav miss1a.wav monks.*wav montr.*wav mulah.*wav nalin.*wav narln.*wav nikls.*wav nimbl.*wav~ //KEEP_CASE
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bgtwav --biff-get-rest notrav.wav nthug.*wav oublk.*wav paper.wav perfo.*wav pnobl.*wav poisn.*wav prism.*wav ragef.*wav raikn.*wav rain.*wav ramaz.*wav readr.*wav redeg.*wav resar.*wav rielt.*wav sarev.*wav safan.*wav~ //KEEP_CASE
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bgtwav --biff-get-rest scarr.*wav seniy.*wav shael.*wav shart.*wav shoal.*wav silen.*wav silke.*wav skiee.*wav slyth.*wav solia.*wav sonnr.*wav sorcr.*wav sparkle.wav surgn.*wav swi_.*wav taerm.*wav tamok.*wav~ //KEEP_CASE
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bgtwav --biff-get-rest taslo.*wav taurg.*wav tazok.*wav tcsma.*wav telmn.*wav tenya.*wav teven.*wav textpop.wav thald.*wav thalt.*wav thunder.*wav tiaxx.*wav togre.*wav tolan.*wav trace.*wav tranz.*wav~ //KEEP_CASE
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bgtwav --biff-get-rest tremn.*wav tscfb.*wav tscft.*wav tscmb.*wav tscmt.*wav tscna.*wav tuthh.*wav tutor.*wav ulran.*wav umber.*wav varci.*wav vicon.*wav vil.*wav voic.*wav~ //KEEP_CASE
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bgtwav --biff-get-rest warri.*wav wiltn.*wav wind.wav wknig.*wav yeslk.*wav xannn.*wav xzarr.*wav~ //KEEP_CASE
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bgtwav --biff-get-rest abela.*wav ajant.*wav alats.*wav aldet.*wav alora.*wav amb_d08.*wav amb_e03.*wav amb_e04.*wav amb_e05.*wav amb_e06.*wav amb_e07.*wav amb_e08.*wav amb_e09.*wav amb_e10.*wav~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bgtwav --biff-get-rest amb_e14.*wav amb_e15.*wav amb_e16.*wav amb_e17.*wav amb_e18.*wav amb_e19.*wav amb_e20.*wav amb_e21.*wav amb_e22.*wav amb_e23.*wav amb_e24.*wav amb_e25.*wav amb_e26.*wav amb_e28.*wav amb_e29.*wav~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bgtwav --biff-get-rest amb_e31.*wav amb_e32.*wav amb_e33.*wav amb_e34.*wav amb_e40.*wav amb_e43.*wav~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bgtwav --biff-get-rest amb_m.*wav amb_n.*wav amb_s.*wav amnso.*wav angel.*wav arden.*wav avalh.*wav bandt.*wav basil.*wav bassl.*wav edwin.*wav belan.*wav beltt.*wav bentl.*wav~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bgtwav --biff-get-rest minsc.*wav imoen.*wav black.*wav brage.*wav branw.*wav~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bgtwav --biff-get-rest brelk.*wav briel.*wav brunn.*wav bruns.*wav button1.wav cader.*wav caldo.*wav carrn10.wav cassn.*wav cast.*wav cattc.*wav centl.*wav chant.wav~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bgtwav --biff-get-rest chant0.*wav chant2.wav chap.*wav choke.wav chromor.wav cldel.*wav coran.*wav~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bgtwav --biff-get-rest crowd.wav culti.*wav dalto.*wav delai.*wav delor.*wav delsv.*wav drade.*wav~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bgtwav --biff-get-rest dream.*wav drizt.*wav droth.*wav dryaa.*wav~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bgtwav --biff-get-rest dunkn.*wav durly.*wav dynah.*wav eldot.*wav eltan.*wav emers.*wav entar.*wav error.*wav~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bgtwav --biff-get-rest explosio.wav faldn.*wav festh.*wav flamn.*wav galkn.*wav gandl.*wav gantl.*wav garrk.*wav~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bgtwav --biff-get-rest gatew.*wav gbasi.*wav gelln.*wav~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bgtwav --biff-get-rest glanm.*wav gnarl.*wav gondp.*wav gonds.*wav gore.wav gorin.*wav greyw.*wav guide.*wav gulp.wav gwere.*wav hairt.*wav helsh.*wav hungn.*wav husam.*wav irlen.*wav~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bgtwav --biff-get-rest intro01f.wav intro02f.wav intro03.wav introadd.wav~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bgtwav --biff-get-rest ithmr.*wav jaher.*wav jebad.*wav jhass.*wav kagan.*wav kaish.*wav karou.*wav keepr.*wav keldt.*wav kestr.*wav khald.*wav~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bgtwav --biff-get-rest kivan.*wav korax.*wav krumm01.wav krumm02.wav kryst.*wav liiaj.*wav~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bgtwav --biff-get-rest lothr.*wav magmiss.wav malkl.*wav marek.*wav marll.*wav menda.*wav messn.*wav misc.*wav miss1a.wav monks.*wav montr.*wav mulah.*wav nalin.*wav narln.*wav nikls.*wav nimbl.*wav~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bgtwav --biff-get-rest notrav.wav nthug.*wav oublk.*wav paper.wav perfo.*wav pnobl.*wav poisn.*wav prism.*wav ragef.*wav raikn.*wav rain.*wav ramaz.*wav readr.*wav redeg.*wav resar.*wav rielt.*wav sarev.*wav safan.*wav~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bgtwav --biff-get-rest scarr.*wav seniy.*wav shael.*wav shart.*wav shoal.*wav silen.*wav silke.*wav skiee.*wav slyth.*wav solia.*wav sonnr.*wav sorcr.*wav sparkle.wav surgn.*wav swi_.*wav taerm.*wav tamok.*wav~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bgtwav --biff-get-rest taslo.*wav taurg.*wav tazok.*wav tcsma.*wav telmn.*wav tenya.*wav teven.*wav textpop.wav thald.*wav thalt.*wav thunder.*wav tiaxx.*wav togre.*wav tolan.*wav trace.*wav tranz.*wav~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bgtwav --biff-get-rest tremn.*wav tscfb.*wav tscft.*wav tscmb.*wav tscmt.*wav tscna.*wav tuthh.*wav tutor.*wav ulran.*wav umber.*wav varci.*wav vicon.*wav vil.*wav voic.*wav~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bgtwav --biff-get-rest warri.*wav wiltn.*wav wind.wav wknig.*wav yeslk.*wav xannn.*wav xzarr.*wav~
 
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bgtwav --biff-get-rest ikeee_04.wav~ //KEEP_CASE
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bgtwav --biff-get-rest ikeee_04.wav~
 
 ACTION_IF ("%WEIDU_OS%" STRING_COMPARE_CASE ~win32~ = 0) BEGIN
   AT_NOW ~bgt\install\win32\delwav.bat %debug%~ EXACT
@@ -9438,7 +9433,7 @@ MOVE + ~bgtwav/umber01.wav~ ~bgtwav/pumber01.wav~
        ~bgtwav/umber06.wav~ ~bgtwav/pumber06.wav~
 
 ACTION_IF ( ~%LANGUAGE%~ STRING_COMPARE_CASE ~french~ ) = 0 THEN BEGIN
-  AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bgtwav --biff-get-rest intro01.wav intro02.wav~ //KEEP_CASE
+  AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bgtwav --biff-get-rest intro01.wav intro02.wav~
   LAM bash_log
   COPY + ~bgt/language/french/montr19.wav~ ~bgtwav/montr19.wav~
          ~bgt/language/french/tscna01.wav~ ~bgtwav/tscna01.wav~
@@ -9446,9 +9441,9 @@ ACTION_IF ( ~%LANGUAGE%~ STRING_COMPARE_CASE ~french~ ) = 0 THEN BEGIN
 END
 
 ACTION_IF ( ~%LANGUAGE%~ STRING_COMPARE_CASE ~german~ ) = 0 THEN BEGIN
-  AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bgtwav --biff-get-rest guarr.*wav chant.*wav oghma03.wav oghma04.wav~ //KEEP_CASE
-  AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bgtwav --biff-get-rest intro01.wav intro02.wav~ //KEEP_CASE
-  AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bgtwav --biff-get-rest gnome.*wav gnomf.*wav wench.*wav~ //KEEP_CASE
+  AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bgtwav --biff-get-rest guarr.*wav chant.*wav oghma03.wav oghma04.wav~
+  AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bgtwav --biff-get-rest intro01.wav intro02.wav~
+  AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bgtwav --biff-get-rest gnome.*wav gnomf.*wav wench.*wav~
   LAM bash_log
   COPY + ~bgt/language/german/montr19.wav~ ~bgtwav/montr19.wav~
          ~bgt/language/german/tscna02.wav~ ~bgtwav/tscna02.wav~
@@ -9470,11 +9465,11 @@ MKDIR ~bg1movie~
 
 AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --out bg1movie --biff-get-rest intro15f.mve~
 LAM bash_log
-MOVE + ~bg1movie/intro15f.mve~ ~bg1movie/soaintro.mve~ //KEEP_CASE
+MOVE + ~bg1movie/intro15f.mve~ ~bg1movie/soaintro.mve~
 COPY + ~bgt/title.tr~ ~bg1movie/intro15f.mve~
 
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bg1movie --biff-get-rest beregost.mve bgenter.mve bgsunris.mve bgsunset.mve bhaal.mve camp.mve cndlkeep.mve dungeon.mve durlag.mve eldrcity.mve endcrdit.mve~ //KEEP_CASE
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bg1movie --biff-get-rest endmovie.mve frarminn.mve gnoll.mve intro.mve ironthrn.mve mineflod.mve nashkell.mve palace.mve sewer.mve wreck.mve wyvern.mve~ //KEEP_CASE
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bg1movie --biff-get-rest beregost.mve bgenter.mve bgsunris.mve bgsunset.mve bhaal.mve camp.mve cndlkeep.mve dungeon.mve durlag.mve eldrcity.mve endcrdit.mve~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bg1movie --biff-get-rest endmovie.mve frarminn.mve gnoll.mve intro.mve ironthrn.mve mineflod.mve nashkell.mve palace.mve sewer.mve wreck.mve wyvern.mve~
 LAM bash_log
 
 MOVE + ~bg1movie/endcrdit.mve~ ~bg1movie/bgencrdt.mve~
@@ -9553,90 +9548,90 @@ MKDIR ~area0015~
       ~areaw000~
       ~areaw500~
 
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area0015 --biff-get-rest ar2600.*bmp ar2600.mos ar2600.wed ar2600.tis~ //KEEP_CASE
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area0015 --biff-get-rest ar2600.*bmp ar2600.mos ar2600.wed ar2600.tis~
 
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area3100 --biff-get-rest ar42.*bmp ar42.*mos ar42.*wed ar42.*tis~ //KEEP_CASE
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area3200 --biff-get-rest ar43.*bmp ar43.*mos ar43.*wed ar43.*tis~ //KEEP_CASE
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area3300 --biff-get-rest ar44.*bmp ar44.*mos ar44.*wed ar44.*tis~ //KEEP_CASE
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area3400 --biff-get-rest ar4500.*bmp ar4500.*mos ar4500.*wed ar4500.*tis~ //KEEP_CASE
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area3500 --biff-get-rest ar46.*bmp ar46.*mos ar46.*wed ar46.*tis~ //KEEP_CASE
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area3600 --biff-get-rest ar47.*bmp ar47.*mos ar47.*wed ar47.*tis~ //KEEP_CASE
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area3700 --biff-get-rest ar48.*bmp ar48.*mos ar48.*wed ar48.*tis~ //KEEP_CASE
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area3800 --biff-get-rest ar49.*bmp ar49.*mos ar49.*wed ar49.*tis~ //KEEP_CASE
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area3900 --biff-get-rest ar50.*bmp ar50.*mos ar50.*wed ar50.*tis~ //KEEP_CASE
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area4100 --biff-get-rest ar51.*bmp ar51.*mos ar51.*wed ar51.*tis~ //KEEP_CASE
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area4200 --biff-get-rest ar52.*bmp ar52.*mos ar52.*wed ar52.*tis~ //KEEP_CASE
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area4300 --biff-get-rest ar53.*bmp ar53.*mos ar53.*wed ar53.*tis~ //KEEP_CASE
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area4400 --biff-get-rest ar54.*bmp ar54.*mos ar54.*wed ar54.*tis~ //KEEP_CASE
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area4600 --biff-get-rest ar55.*bmp ar55.*mos ar55.*wed ar55.*tis~ //KEEP_CASE
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area4700 --biff-get-rest ar56.*bmp ar56.*mos ar56.*wed ar56.*tis~ //KEEP_CASE
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area4800 --biff-get-rest ar57.*bmp ar57.*mos ar57.*wed ar57.*tis~ //KEEP_CASE
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area4900 --biff-get-rest ar58.*bmp ar58.*mos ar58.*wed ar58.*tis~ //KEEP_CASE
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area5100 --biff-get-rest ar59.*bmp ar59.*mos ar59.*wed ar59.*tis~ //KEEP_CASE
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area5300 --biff-get-rest ar60.*bmp ar60.*mos ar60.*wed ar60.*tis~ //KEEP_CASE
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area5400 --biff-get-rest ar61.*bmp ar61.*mos ar61.*wed ar61.*tis~ //KEEP_CASE
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area6500 --biff-get-rest ar26.*bmp ar26.*mos ar26.*wed ar26.*tis~ //KEEP_CASE
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area6600 --biff-get-rest ar27.*bmp ar27.*mos ar27.*wed ar27.*tis~ //KEEP_CASE
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area3100 --biff-get-rest ar42.*bmp ar42.*mos ar42.*wed ar42.*tis~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area3200 --biff-get-rest ar43.*bmp ar43.*mos ar43.*wed ar43.*tis~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area3300 --biff-get-rest ar44.*bmp ar44.*mos ar44.*wed ar44.*tis~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area3400 --biff-get-rest ar4500.*bmp ar4500.*mos ar4500.*wed ar4500.*tis~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area3500 --biff-get-rest ar46.*bmp ar46.*mos ar46.*wed ar46.*tis~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area3600 --biff-get-rest ar47.*bmp ar47.*mos ar47.*wed ar47.*tis~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area3700 --biff-get-rest ar48.*bmp ar48.*mos ar48.*wed ar48.*tis~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area3800 --biff-get-rest ar49.*bmp ar49.*mos ar49.*wed ar49.*tis~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area3900 --biff-get-rest ar50.*bmp ar50.*mos ar50.*wed ar50.*tis~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area4100 --biff-get-rest ar51.*bmp ar51.*mos ar51.*wed ar51.*tis~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area4200 --biff-get-rest ar52.*bmp ar52.*mos ar52.*wed ar52.*tis~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area4300 --biff-get-rest ar53.*bmp ar53.*mos ar53.*wed ar53.*tis~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area4400 --biff-get-rest ar54.*bmp ar54.*mos ar54.*wed ar54.*tis~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area4600 --biff-get-rest ar55.*bmp ar55.*mos ar55.*wed ar55.*tis~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area4700 --biff-get-rest ar56.*bmp ar56.*mos ar56.*wed ar56.*tis~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area4800 --biff-get-rest ar57.*bmp ar57.*mos ar57.*wed ar57.*tis~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area4900 --biff-get-rest ar58.*bmp ar58.*mos ar58.*wed ar58.*tis~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area5100 --biff-get-rest ar59.*bmp ar59.*mos ar59.*wed ar59.*tis~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area5300 --biff-get-rest ar60.*bmp ar60.*mos ar60.*wed ar60.*tis~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area5400 --biff-get-rest ar61.*bmp ar61.*mos ar61.*wed ar61.*tis~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area6500 --biff-get-rest ar26.*bmp ar26.*mos ar26.*wed ar26.*tis~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area6600 --biff-get-rest ar27.*bmp ar27.*mos ar27.*wed ar27.*tis~
 
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area6700 --biff-get-rest ar330.*bmp ar330.*mos ar331.*bmp ar331.*mos ar332.*bmp ar332.*mos~ //KEEP_CASE
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area6700 --biff-get-rest ar330.*wed ar331.*wed ar332.*wed~ //KEEP_CASE
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area6700 --biff-get-rest ar330.*tis ar331.*tis ar332.*tis~ //KEEP_CASE
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area670a --biff-get-rest ar333.*bmp ar333.*mos ar334.*bmp ar334.*mos ar335.*bmp ar335.*mos~ //KEEP_CASE
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area670a --biff-get-rest ar333.*wed ar334.*wed ar335.*wed~ //KEEP_CASE
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area670a --biff-get-rest ar333.*tis ar334.*tis ar335.*tis~ //KEEP_CASE
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area6700 --biff-get-rest ar330.*bmp ar330.*mos ar331.*bmp ar331.*mos ar332.*bmp ar332.*mos~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area6700 --biff-get-rest ar330.*wed ar331.*wed ar332.*wed~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area6700 --biff-get-rest ar330.*tis ar331.*tis ar332.*tis~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area670a --biff-get-rest ar333.*bmp ar333.*mos ar334.*bmp ar334.*mos ar335.*bmp ar335.*mos~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area670a --biff-get-rest ar333.*wed ar334.*wed ar335.*wed~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area670a --biff-get-rest ar333.*tis ar334.*tis ar335.*tis~
 
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area6800 --biff-get-rest ar23.*bmp ar23.*mos ar23.*wed ar23.*tis~ //KEEP_CASE
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area6900 --biff-get-rest ar28.*bmp ar28.*mos ar28.*wed ar28.*tis~ //KEEP_CASE
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area7000 --biff-get-rest ar22.*bmp ar22.*mos ar22.*wed ar22.*tis~ //KEEP_CASE
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area7100 --biff-get-rest ar32.*bmp ar32.*mos ar32.*wed ar32.*tis~ //KEEP_CASE
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area6800 --biff-get-rest ar23.*bmp ar23.*mos ar23.*wed ar23.*tis~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area6900 --biff-get-rest ar28.*bmp ar28.*mos ar28.*wed ar28.*tis~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area7000 --biff-get-rest ar22.*bmp ar22.*mos ar22.*wed ar22.*tis~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area7100 --biff-get-rest ar32.*bmp ar32.*mos ar32.*wed ar32.*tis~
 
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area7200 --biff-get-rest ar010.*bmp ar010.*mos ar011.*bmp ar011.*mos ar012.*bmp ar012.*mos ar0130.*bmp ar0130.mos~ //KEEP_CASE
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area7200 --biff-get-rest ar010.*wed ar011.*wed ar012.*wed ar0130.wed~ //KEEP_CASE
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area7200 --biff-get-rest ar010.*tis ar011.*tis ar012.*tis ar0130.*tis~ //KEEP_CASE
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area7200 --biff-get-rest ar010.*bmp ar010.*mos ar011.*bmp ar011.*mos ar012.*bmp ar012.*mos ar0130.*bmp ar0130.mos~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area7200 --biff-get-rest ar010.*wed ar011.*wed ar012.*wed ar0130.wed~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area7200 --biff-get-rest ar010.*tis ar011.*tis ar012.*tis ar0130.*tis~
 
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area720a --biff-get-rest ar0131.*bmp ar0131.mos ar0132.*bmp ar0132.mos ar0133.*bmp ar0133.mos ar0134.*bmp ar0134.mos ar0135.*bmp ar0135.mos ar0136.*bmp ar0136.mos ar0137.*bmp ar0137.mos ar0138.*bmp ar0138.mos ar0139.*bmp ar0139.mos ar014.*bmp ar014.*mos ar0150.*bmp ar0150.mos~ //KEEP_CASE
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area720a --biff-get-rest ar0131.wed ar0132.wed ar0133.wed ar0134.wed ar0135.wed ar0136.wed ar0137.wed ar0138.wed ar0139.wed ar014.*wed ar0150.wed~ //KEEP_CASE
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area720a --biff-get-rest ar0131.tis ar0132.tis ar0133.tis ar0134.tis ar0135.tis ar0136.tis ar0137.tis ar0138.tis ar0139.tis ar014.*tis ar0150.tis~ //KEEP_CASE
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area720a --biff-get-rest ar0131.*bmp ar0131.mos ar0132.*bmp ar0132.mos ar0133.*bmp ar0133.mos ar0134.*bmp ar0134.mos ar0135.*bmp ar0135.mos ar0136.*bmp ar0136.mos ar0137.*bmp ar0137.mos ar0138.*bmp ar0138.mos ar0139.*bmp ar0139.mos ar014.*bmp ar014.*mos ar0150.*bmp ar0150.mos~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area720a --biff-get-rest ar0131.wed ar0132.wed ar0133.wed ar0134.wed ar0135.wed ar0136.wed ar0137.wed ar0138.wed ar0139.wed ar014.*wed ar0150.wed~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area720a --biff-get-rest ar0131.tis ar0132.tis ar0133.tis ar0134.tis ar0135.tis ar0136.tis ar0137.tis ar0138.tis ar0139.tis ar014.*tis ar0150.tis~
 
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area720b --biff-get-rest ar0151.*bmp ar0151.mos ar0152.*bmp ar0152.mos ar0153.*bmp ar0153.mos ar0155.*bmp ar0155.mos ar0156.*bmp ar0156.mos ar016.*bmp ar016.*mos ar017.*bmp ar017.*mos~ //KEEP_CASE
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area720b --biff-get-rest ar0151.wed ar0152.wed ar0153.wed ar0155.wed ar0156.wed ar016.*wed ar017.*wed~ //KEEP_CASE
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area720b --biff-get-rest ar0151.tis ar0152.tis ar0153.tis ar0155.tis ar0156.tis ar016.*tis ar017.*tis~ //KEEP_CASE
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area720b --biff-get-rest ar0151.*bmp ar0151.mos ar0152.*bmp ar0152.mos ar0153.*bmp ar0153.mos ar0155.*bmp ar0155.mos ar0156.*bmp ar0156.mos ar016.*bmp ar016.*mos ar017.*bmp ar017.*mos~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area720b --biff-get-rest ar0151.wed ar0152.wed ar0153.wed ar0155.wed ar0156.wed ar016.*wed ar017.*wed~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area720b --biff-get-rest ar0151.tis ar0152.tis ar0153.tis ar0155.tis ar0156.tis ar016.*tis ar017.*tis~
 
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area7300 --biff-get-rest ar02.*bmp ar02.*mos ar02.*wed ar02.*tis~ //KEEP_CASE
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area7400 --biff-get-rest ar03.*bmp ar03.*mos ar03.*wed ar03.*tis~ //KEEP_CASE
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area7500 --biff-get-rest ar04.*bmp ar04.*mos ar04.*wed ar04.*tis~ //KEEP_CASE
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area7600 --biff-get-rest ar06.*bmp ar06.*mos ar06.*wed ar06.*tis~ //KEEP_CASE
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area7700 --biff-get-rest ar07.*bmp ar07.*mos ar07.*wed ar07.*tis~ //KEEP_CASE
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area7800 --biff-get-rest ar08.*bmp ar08.*mos ar08.*wed ar08.*tis~ //KEEP_CASE
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area7900 --biff-get-rest ar09.*bmp ar09.*mos ar09.*wed ar09.*tis~ //KEEP_CASE
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area8000 --biff-get-rest ar11.*bmp ar11.*mos ar11.*wed ar11.*tis~ //KEEP_CASE
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area8100 --biff-get-rest ar12.*bmp ar12.*mos ar12.*wed ar12.*tis~ //KEEP_CASE
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area8200 --biff-get-rest ar13.*bmp ar13.*mos ar13.*wed ar13.*tis~ //KEEP_CASE
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area8300 --biff-get-rest ar14.*bmp ar14.*mos ar14.*wed ar14.*tis~ //KEEP_CASE
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area8400 --biff-get-rest ar16.*bmp ar16.*mos ar16.*wed ar16.*tis~ //KEEP_CASE
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area8500 --biff-get-rest ar17.*bmp ar17.*mos ar17.*wed ar17.*tis~ //KEEP_CASE
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area8500 --biff-get-rest ar4501.*bmp ar4501.*mos ar4501.*wed ar4501.*tis~ //KEEP_CASE
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area8600 --biff-get-rest ar18.*bmp ar18.*mos ar18.*wed ar18.*tis~ //KEEP_CASE
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area8700 --biff-get-rest ar19.*bmp ar19.*mos ar19.*wed ar19.*tis~ //KEEP_CASE
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area8800 --biff-get-rest ar21.*bmp ar21.*mos ar21.*wed ar21.*tis~ //KEEP_CASE
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area8900 --biff-get-rest ar24.*bmp ar24.*mos ar24.*wed ar24.*tis~ //KEEP_CASE
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area9000 --biff-get-rest ar29.*bmp ar29.*mos ar29.*wed ar29.*tis~ //KEEP_CASE
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area9100 --biff-get-rest ar30.*bmp ar30.*mos ar30.*wed ar30.*tis~ //KEEP_CASE
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area9200 --biff-get-rest ar31.*bmp ar31.*mos ar31.*wed ar31.*tis~ //KEEP_CASE
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area9300 --biff-get-rest ar34.*bmp ar34.*mos ar34.*wed ar34.*tis~ //KEEP_CASE
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area9400 --biff-get-rest ar35.*bmp ar35.*mos ar35.*wed ar35.*tis~ //KEEP_CASE
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area9500 --biff-get-rest ar36.*bmp ar36.*mos ar36.*wed ar36.*tis~ //KEEP_CASE
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area9600 --biff-get-rest ar37.*bmp ar37.*mos ar37.*wed ar37.*tis~ //KEEP_CASE
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area9700 --biff-get-rest ar38.*bmp ar38.*mos ar38.*wed ar38.*tis~ //KEEP_CASE
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area9800 --biff-get-rest ar39.*bmp ar39.*mos ar39.*wed ar39.*tis~ //KEEP_CASE
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area9900 --biff-get-rest ar40.*bmp ar40.*mos ar40.*wed ar40.*tis~ //KEEP_CASE
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out areaa000 --biff-get-rest ar00.*bmp ar00.*mos ar00.*wed ar00.*tis~ //KEEP_CASE
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out areaa100 --biff-get-rest ar41.*bmp ar41.*mos ar41.*wed ar41.*tis~ //KEEP_CASE
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area7300 --biff-get-rest ar02.*bmp ar02.*mos ar02.*wed ar02.*tis~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area7400 --biff-get-rest ar03.*bmp ar03.*mos ar03.*wed ar03.*tis~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area7500 --biff-get-rest ar04.*bmp ar04.*mos ar04.*wed ar04.*tis~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area7600 --biff-get-rest ar06.*bmp ar06.*mos ar06.*wed ar06.*tis~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area7700 --biff-get-rest ar07.*bmp ar07.*mos ar07.*wed ar07.*tis~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area7800 --biff-get-rest ar08.*bmp ar08.*mos ar08.*wed ar08.*tis~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area7900 --biff-get-rest ar09.*bmp ar09.*mos ar09.*wed ar09.*tis~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area8000 --biff-get-rest ar11.*bmp ar11.*mos ar11.*wed ar11.*tis~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area8100 --biff-get-rest ar12.*bmp ar12.*mos ar12.*wed ar12.*tis~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area8200 --biff-get-rest ar13.*bmp ar13.*mos ar13.*wed ar13.*tis~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area8300 --biff-get-rest ar14.*bmp ar14.*mos ar14.*wed ar14.*tis~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area8400 --biff-get-rest ar16.*bmp ar16.*mos ar16.*wed ar16.*tis~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area8500 --biff-get-rest ar17.*bmp ar17.*mos ar17.*wed ar17.*tis~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area8500 --biff-get-rest ar4501.*bmp ar4501.*mos ar4501.*wed ar4501.*tis~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area8600 --biff-get-rest ar18.*bmp ar18.*mos ar18.*wed ar18.*tis~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area8700 --biff-get-rest ar19.*bmp ar19.*mos ar19.*wed ar19.*tis~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area8800 --biff-get-rest ar21.*bmp ar21.*mos ar21.*wed ar21.*tis~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area8900 --biff-get-rest ar24.*bmp ar24.*mos ar24.*wed ar24.*tis~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area9000 --biff-get-rest ar29.*bmp ar29.*mos ar29.*wed ar29.*tis~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area9100 --biff-get-rest ar30.*bmp ar30.*mos ar30.*wed ar30.*tis~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area9200 --biff-get-rest ar31.*bmp ar31.*mos ar31.*wed ar31.*tis~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area9300 --biff-get-rest ar34.*bmp ar34.*mos ar34.*wed ar34.*tis~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area9400 --biff-get-rest ar35.*bmp ar35.*mos ar35.*wed ar35.*tis~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area9500 --biff-get-rest ar36.*bmp ar36.*mos ar36.*wed ar36.*tis~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area9600 --biff-get-rest ar37.*bmp ar37.*mos ar37.*wed ar37.*tis~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area9700 --biff-get-rest ar38.*bmp ar38.*mos ar38.*wed ar38.*tis~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area9800 --biff-get-rest ar39.*bmp ar39.*mos ar39.*wed ar39.*tis~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out area9900 --biff-get-rest ar40.*bmp ar40.*mos ar40.*wed ar40.*tis~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out areaa000 --biff-get-rest ar00.*bmp ar00.*mos ar00.*wed ar00.*tis~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out areaa100 --biff-get-rest ar41.*bmp ar41.*mos ar41.*wed ar41.*tis~
 
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out aread000 --biff-get-rest ar05.*bmp ar05.*mos ar05.*wed ar05.*tis~ //KEEP_CASE
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out areau000 --biff-get-rest ar100.*bmp ar100.*mos ar100.*wed ar100.*tis~ //KEEP_CASE
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out areaw000 --biff-get-rest ar20.*bmp ar20.*mos ar20.*wed ar20.*tis~ //KEEP_CASE
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out areaw500 --biff-get-rest ar15.*bmp ar15.*mos ar15.*wed ar15.*tis~ //KEEP_CASE
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out aread000 --biff-get-rest ar05.*bmp ar05.*mos ar05.*wed ar05.*tis~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out areau000 --biff-get-rest ar100.*bmp ar100.*mos ar100.*wed ar100.*tis~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out areaw000 --biff-get-rest ar20.*bmp ar20.*mos ar20.*wed ar20.*tis~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out areaw500 --biff-get-rest ar15.*bmp ar15.*mos ar15.*wed ar15.*tis~
 
 LAM bash_log
 
@@ -9763,14 +9758,14 @@ AT_NOW ~%mosunpack% -s -f -o bg1misc%slash%drmtxt-7.mos bgt%slash%base%slash%moz
 AT_NOW ~%mosunpack% -s -f -o bg1misc%slash%guichp0b.mos bgt%slash%base%slash%moz%slash%guichp0b.moz %debug%~ EXACT
 
 //Import tasloi and basilisk animations
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bg1misc --biff-get-rest mbasg.*~ //KEEP_CASE
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bg1misc --biff-get-rest mtasg.*~ //KEEP_CASE
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bg1misc --biff-get-rest mbasg.*~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bg1misc --biff-get-rest mtasg.*~
 
 //Import item graphics
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bg1misc --biff-get-rest cmisc1b.bam cmisc1g.bam cmisc1h.bam cmisc1i.bam~ //KEEP_CASE
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bg1misc --biff-get-rest cmisc2a.bam cmisc2b.bam cmisc2c.bam cmisc2f.bam cmisc2g.bam cmisc2h.bam cmisc2i.bam cmisc2k.bam cmisc2l.bam cmisc2m.bam cmisc2n.bam cmisc2p.bam~ //KEEP_CASE
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bg1misc --biff-get-rest cmisc91.bam cmisc92.bam cmisc94.bam cmisc95.bam cmisc98.bam~ //KEEP_CASE
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bg1misc --biff-get-rest cplat08.bam isw1h06.bam isw1h18.bam isw2h07.bam~ //KEEP_CASE
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bg1misc --biff-get-rest cmisc1b.bam cmisc1g.bam cmisc1h.bam cmisc1i.bam~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bg1misc --biff-get-rest cmisc2a.bam cmisc2b.bam cmisc2c.bam cmisc2f.bam cmisc2g.bam cmisc2h.bam cmisc2i.bam cmisc2k.bam cmisc2l.bam cmisc2m.bam cmisc2n.bam cmisc2p.bam~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bg1misc --biff-get-rest cmisc91.bam cmisc92.bam cmisc94.bam cmisc95.bam cmisc98.bam~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bg1misc --biff-get-rest cplat08.bam isw1h06.bam isw1h18.bam isw2h07.bam~
 LAM bash_log
 
 MOVE + ~bg1misc/isw2h07.bam~ ~bg1misc/bgisw2h7.bam~

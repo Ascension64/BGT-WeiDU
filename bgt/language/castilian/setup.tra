@@ -99,6 +99,26 @@ No permitido a:
  Mago
  Ladrón~
 
+//@23965 - change Large Sword to Two Handed Sword
+@200006 = ~Mandoble +3: "Borde del mundo"
+Esta es un arma legendaria de proporciones épicas, especialmente para las tribus bárbaras del norte. Muchos campeones la han blandido contra incontables enemigos, derramando tanta sangre que se podría llenar un pequeño mar. La Historia no admitirá jamás que tal mandoble pudo haber sido forjado, y por eso cada poseedor solía asociar su creación a cualquier mito en el que creyera. El relato más grandilocuente es aquel donde un líder guerrero navegó más allá de las cumbres que rodean los límites de Abeir-Toril; cuando se adentró en el vacío concibió el arma gracias al poder de su voluntad. Sea cual sea la verdad, este mandoble es terrible en las manos adecuadas.
+
+CARACTERÍSTICAS:
+
+Daño: 1D10 +3
+THAC0: bonificador +3
+Tipo de daño: Cortante
+Peso: 9 lbs
+Factor de velocidad: 7
+Talento marcial: Espada grande
+Tipo: A dos manos
+
+No permitido a:
+ Druida
+ Clérigo
+ Mago
+ Ladrón~ 
+
 ////////////////////////////////////////////////////////////////////
 // Conjuros
 ////////////////////////////////////////////////////////////////////

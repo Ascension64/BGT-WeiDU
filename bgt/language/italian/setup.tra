@@ -94,6 +94,25 @@ Non utilizzabile da:
  Mago
  Ladro~
 
+//@23965 - da Spada lunga a Spada a due mani
+@200006 = ~Spada a due mani +3 : "Confine del Mondo"
+Quest'arma è diventata una leggenda, specialmente tra le tribù di barbari dell'estremo nord. La sua lama, maneggiata da valorosi, ha trafitto innumerevoli nemici e ha versato tanto sangue da poterci riempire il mare. Da un lato la storia ne nega perfino l'esistenza, dall'altro si sa che nel tempo i diversi proprietari della spada hanno raccontato leggende diverse circa le origini dell'arma. La storia più spettacolare è quella di un grande comandante che viaggiò in mare fino a raggiungere i confini del mondo e, una volta arrivato, precipitò nel vuoto. Pare che con la sola volontà avesse dato forma alla spada, creandola dal nulla. Qualunque sia la verità, nelle mani giuste questa spada può essere micidiale.
+
+STATISTICHE:
+
+Danno: 1D10 +3
+THACO: bonus +3
+Tipo di danno: Taglio
+Peso: 9
+Fattore-velocità: 7
+Tipo di capacità: Spada a due mani
+Tipo: A due mani
+Non utilizzabile da:
+ Druido
+ Chierico
+ Mago
+ Ladro~
+
 ////////////////////////////////////////////////////////////////////
 // Spells
 ////////////////////////////////////////////////////////////////////

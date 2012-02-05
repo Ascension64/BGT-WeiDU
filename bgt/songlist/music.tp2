@@ -55,7 +55,7 @@ LANGUAGE ~English~
          ~bgt/language/english/prompts.tra~
 LANGUAGE ~Castellano (Castilian/Spanish)~
          ~castilian~
-         ~bgt/language/castilian/prompts.tra~
+         ~bgt/language/castilian/prompts-%WEIDU_OS%.tra~
 LANGUAGE ~Francais (French)~
          ~french~
          ~bgt/language/french/prompts.tra~

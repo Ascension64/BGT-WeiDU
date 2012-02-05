@@ -90,6 +90,25 @@ Nemùe uívat:
  Mág
  Zlodìj~
 
+//@23965 - change Large Sword to Two Handed Sword
+@200006 = ~Obouruèní meè +3: 'Okraj svìta'
+Toto je legendární zbraò hrdinskıch pøíbìhù, zvláštì mezi barbarskımi kmeny dalekého severu. Hrdina za hrdinou tøímali tento meè proti bezpoètu nepøátel, a krev, kterou prolili, by vydala na menší moøe. Dìjiny nepøipouští, e by taková zbraò mohla bıt vykována, a kadı vlastník si zøejmì její pùvod spojil s mıtem, kterému vìøil. Nejvelkolepìjší z tìchto pøíbìhù vypráví o mocném náèelníkovi, kterı se plavil ke skalám, je ohranièují svìt. Tam se dostal do prázdnoty a jeho mysl stvoøila tento meè z nièeho. A u je pravda jakákoliv, v pravıch rukou tento meè dokáe rozsévat zkázu.
+
+VLASTNOSTI:
+
+Zranìní: 1k10 +3
+THAC0: +3 bonus
+Druh zranìní: seèné
+Váha: 9
+Rychlost: 7
+Druh dovednosti: Obouruèní meè
+Druh: dvouruèní
+Nemùe uívat:
+ Druid
+ Klerik
+ Mág
+ Zlodìj~
+
 ////////////////////////////////////////////////////////////////////
 // Spells
 ////////////////////////////////////////////////////////////////////

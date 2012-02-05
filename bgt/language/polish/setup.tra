@@ -17,7 +17,10 @@ Waga: 7
 OpóŸnienie: 5
 Rodzaj bieg³oœci: Wekiera
 Typ broni: jednorêczna
-Nie mo¿e u¿ywaæ: Druid, Mag, Z³odziej~
+Nie mo¿e u¿ywaæ:
+ Druid
+ Mag
+ Z³odziej~
 
 //@7350 - change Bow Weapons to Long Bow
 @200002 = ~D³ugi £uk Celnoœci: Zabójczy Strza³
@@ -32,7 +35,11 @@ Waga: 2
 OpóŸnienie: 5
 Rodzaj bieg³oœci: D³ugi ³uk
 Typ broni: dwurêczna
-Nie mo¿e u¿ywaæ: Druid, Kap³an, Mag, Z³odziej~
+Nie mo¿e u¿ywaæ:
+ Druid
+ Kap³an
+ Mag
+ Z³odziej~
 
 //@7351 = change Bow Weapons to Short Bow
 @200003 = ~£uk Or³ów
@@ -48,9 +55,9 @@ OpóŸnienie: 4
 Rodzaj bieg³oœci: Krótki ³uk
 Typ broni: 2-rêczna
 Nie mo¿e u¿ywaæ:
-Druid
-Kap³an
-Mag~
+ Druid
+ Kap³an
+ Mag~
 
 //@20885 - change Small Sword to Dagger
 @200004 = ~Srebrny Sztylet: Zguba Likantropów
@@ -66,7 +73,8 @@ Waga: 1
 OpóŸnienie: 2
 Rodzaj bieg³oœci: Sztylet
 Typ broni: jednorêczna
-Nie mo¿e u¿ywaæ: Kap³an~
+Nie mo¿e u¿ywaæ:
+ Kap³an~
 
 //@20882 - change Long Sword to Bastard Sword
 @200005 = ~Miecz Baldurana. 
@@ -82,7 +90,30 @@ Waga: 12
 OpóŸnienie: 7
 Rodzaj bieg³oœci: Miecz pó³torarêczny
 Typ broni: jednorêczna
-Nie mo¿e u¿ywaæ: Druid, Kap³an, Mag, Z³odziej~
+Nie mo¿e u¿ywaæ:
+ Druid
+ Kap³an
+ Mag
+ Z³odziej~
+
+//@23965 - change Large Sword to Two Handed Sword
+@200006 = ~Miecz oburêczny +3 "Skraj œwiata"
+Jest to legendarna broñ o heroicznym wymiarze, szczególnie wœród plemion barbarzyñców z pó³nocy. Kolejni herosi u¿ywali jej przeciw niezliczonym zastêpom wrogów, a krew przez ni¹ przelana mog³aby wype³niæ niewielkie morze. Historia nie daje dowodów, i¿ taka broñ mog³aby zostaæ w normalny sposób wykuta i tak ka¿dy kolejny jej w³aœciciel wi¹za³ jej pochodzenie z mitem, w który wierzy³. Jedna z najbardziej podnios³ych z tych opowieœci mówi o wielkim wodzu, który po¿eglowa³ ku ska³om, maj¹cym stanowiæ granicê œwiata. Tam siêgn¹³ w pustkê i jego wola ukszta³towa³a ten miecz z nicoœci. Jakakolwiek jest prawda, to ostrze we w³aœciwych rêkach jest naprawdê straszliwym orê¿em.
+
+STATYSTYKI:
+
+Obra¿enia: 1k10+3
+Trak0: +3
+Typ obra¿eñ: sieczne
+Waga: 9
+OpóŸnienie: 7
+Rodzaj bieg³oœci: miecze oburêczne
+Typ: 2 rêczna
+Nie mo¿e u¿ywaæ:
+ Druid
+ Kap³an
+ Mag
+ Z³odziej~
 
 ////////////////////////////////////////////////////////////////////
 // Spells

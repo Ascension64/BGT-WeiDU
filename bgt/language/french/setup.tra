@@ -96,6 +96,25 @@ Non utilisable par :
  Mage
  Voleur~
 
+//@23965 - change Large Sword to Two Handed Sword
+@200006 = ~Epée à deux mains +3 : "Bord du Monde"
+Il s'agit d'une arme légendaire aux dimensions épiques, en particulier parmi les tribus barbares nordiques. De grands héros l'ont utilisée contre d'innombrables ennemis et le sang qu'elle a versé pourrait inonder une vallée entière. L'histoire n'admet pas qu'une telle arme ait pu être forgée et chacun de ses propriétaires successifs associe son origine à la genèse propre à ses croyances. Le plus grandiose de ces mythes veut qu'un grand chef ait navigué jusqu'aux falaises qui, selon les légendes, bordent le monde. Arrivé à cet endroit, il aurait lancé ses bras dans le vide et créé cette arme par la seule force de sa volonté. Quelle que soit la vérité, entre des mains expérimentées, cette épée est une arme redoutable.
+
+PARAMETRES :
+
+Dégâts : 1D10 +3
+TAC0 : +3 de bonus
+Type de dégâts : tranchant
+Poids : 9
+Facteur de vitesse : 7
+Type de compétence : Epée à 2 mains
+Type : à deux mains
+Non utilisable par :
+ Druide
+ Clerc
+ Mage
+ Voleur~
+
 ////////////////////////////////////////////////////////////////////
 // Spells
 ////////////////////////////////////////////////////////////////////

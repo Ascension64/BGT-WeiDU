@@ -877,7 +877,7 @@ It has neither mouth, nor teeth, yet, it eats its food steadily.  It has neither
 @868   = ~Sorry if I seem out of breath, but I had to retreat from a battle.  I was ambushed by a dozen gnolls farther back on the trail.  I handily dispatched them but thought better of fighting their half dozen ogre friends.  I think I've evaded them for now.  Would any of you care for a drink of some fine Selgauntian brandy?~
 @869   = ~I must take my leave now.~
 @870   = ~Well, you needn't be so rude, I apologize for offering my hospitality.~
-@871   = ~All right, lets go about this again.  Join me for a drink.~
+@871   = ~All right, let's go about this again.  Join me for a drink.~
 @872   = ~I hope you are enjoying your liquor, it is some of the best you can find.  All of you are probably wondering why I'm being so generous, 'obviously not from the kindness of his heart' you think.  Well in a way I am.  You look like the type to be on the outlook for ways to improve the quality of your life.  Well, I have a proposal that could help you in that endeavor.  You see, there's a girl, my lover in fact, who desires to escape her father and live on her own.  Her father is Entar Silvershield, one of the Dukes of Baldur's Gate.  This, of course, makes her desires more difficult than that of the average city girl.  However, with your assistance we could help her escape the tyrannical clutches of Entar.  Here's the punch line: since Entar's going to be hunting us anyway we can blackmail him for hordes of cash and not worry about our captive escaping.  After all, we're doing it all for the sake of Skie.  Now we needn't go about this right away, in fact I'll help you with whatever you're doing until you decide to head up to Baldur's Gate.  Just think of it as one favor deserving another.~
 @873   = ~You're missing the opportunity of your life.~
 @874   = ~I'm glad you're all savvy enough to recognize a good opportunity when it comes.~
@@ -5140,7 +5140,7 @@ This spell is similar to the invisibility spell, but the recipient is able to at
 @5106  = ~Wait!  Hey, I'm sorry, just don't kill me... please.  I'll tell you about the Chill.~
 @5107  = ~Go on.~
 @5108  = ~You can shut up and get out of here.~
-@5109  = ~The Chill are a group of mercenaries, they're part of the group who's been raiding the merchant caravans.  I just got lost in a raid a couple days back, some of the Flaming Fist had been doggin' my steps.  There, I've told you want ya wanted to hear.~
+@5109  = ~The Chill are a group of mercenaries, they're part of the group who's been raiding the merchant caravans.  I just got lost in a raid a couple days back, some of the Flaming Fist had been doggin' my steps.  There, I've told you what ya wanted to hear.~
 @5110  = ~Stop!  You have trespassed on our territory.  You shall not be allowed to leave until you have paid tribute.  We demand 50 gold in tribute!~
 @5111  = ~We have no money.  Sorry?~
 @5112  = ~All right then, here's your 50 gold.  Goodbye now!~
@@ -20155,7 +20155,7 @@ Hour <HOUR>~
 @16411 = ~Well good!  You've changed since we were friends anyway.  Not nearly as much fun now.  Should have stayed in Candlekeep, instead of wasting time with you gully pennies.~
 @16412 = ~You old rumjake fool!  I knew you'd be back!  Let's get back to traveling the good road, eh?~
 @16413 = ~Sorry kiddo, but I don't need your company just yet.~
-@16414 = ~Sorry to have kept you waiting.  Lets get going.~
+@16414 = ~Sorry to have kept you waiting.  Let's get going.~
 @16415 = ~Oh fine!  I'll just pester about around here until you realize you can't live without little Imoen.  You know you will.~
 @16416 = ~You bet!  We'll nick ourselves a whole purse o' fun before the night is through!~
 @16417 = ~'Ere there.  You're Gorion's little whelp, aren't ya?  Yeah, you match the description.  You don't look so dangerous to me.~
@@ -22321,7 +22321,7 @@ This offer has been extended to all appropriate guilds.
 Those returning with proof of the deed shall receive no less than six hundred and eighty coins of gold.
 
 As always, any that reveal these plans to the forces of law shall join the target in their fate.~
-@17924 = ~Draw your daggers and spells and lets have at 'er!  You've crossed our employers and this is as far as you're going to go my friend.  Should've known that lazy bounty-hunting rabble wouldn't get the job done.  Never settle for second best, I always say!~
+@17924 = ~Draw your daggers and spells and let's have at 'er!  You've crossed our employers and this is as far as you're going to go my friend.  Should've known that lazy bounty-hunting rabble wouldn't get the job done.  Never settle for second best, I always say!~
 @17925 = ~You had best step aside, if you know what's good for you!~
 @17926 = ~You want to know what I always say?  "Always kill the mouthy one," that's what I always say.~
 @17927 = ~I don't suppose you would care to talk this over?  There's no need for bloodshed.~
@@ -26461,7 +26461,7 @@ Not Usable By:
 @21343 = ~Welcome to Ulgoth's Beard. I hope you have a pleasant stay.~
 @21344 = ~Hello, stranger. If you're lookin' for adventure you should talk to ol' Ike Cascadion Vendar. He'll set you up for a reasonable price. I was down at the docks this morning, talking to Fenrus about it. Fenrus loved the tour. Ask him yourself if you don't believe me.~
 @21345 = ~That guy from Waterdeep sure keeps to himself. He only leaves his house a couple of times a month.~
-@21346 = ~So I says to the fish, "I don't like you and you don't like me but lets try to make this work, for the minnows' sake."~
+@21346 = ~So I says to the fish, "I don't like you and you don't like me but let's try to make this work, for the minnows' sake."~
 @21347 = ~You'll have to excuse me. I have to feed Bert.~
 @21348 = ~My sea bass.~
 @21349 = ~He's very, very hungry... hungry for blood...~
