@@ -1,11 +1,3 @@
-////////////////////////
-//Language compatibility
-////////////////////////
-
-//The French version INTRO01F.WAV and INTRO02F.WAV are translated to INTRO01.WAV and INTRO02.WAV, so the StrRefs need to be updated to reflect this
-@300000 = ~Nichée en haut des falaises qui surplombent la Côte des Epées, la citadelle de Château-Suif abrite une merveilleuse collection complète d'oeuvres n'ayant son pareil à Féérune. Cette imposante forteresse est préservée de tous les tourments qui s'abattent parfois sur le reste des Royaumes Oubliés.~ [INTRO01]
-@300001 = ~C'est au long de ces couloirs saints de la connaissance que votre histoire commença. Sous la tutelle du sage Gorion, vous avez vécu vingt ans au sein de cette forteresse austère. Tel un père, il vous a élevé et bercé de milles histoires de héros et de monstres, d'amants et d'infidèles, de batailles et de tragédies. Seule une histoire ne vous fut jamais contée : celle de votre passé. On vous a confié que vous étiez orphelin, mais le reste est un mystère.~ [INTRO02]
-
 ////////////////////////////////////////////////////////////////////
 //Items
 ////////////////////////////////////////////////////////////////////

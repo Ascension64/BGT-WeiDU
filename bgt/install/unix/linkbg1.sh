@@ -1,39 +1,28 @@
 #! /bin/sh
-if test -f bgt/bg1path.txt
-then
-#if path has already been given, read it
-	bg1path=$(cat bgt/bg1path.txt)
-else #should never trigger
-#path not given: FAIL!
-	echo "FAILURE: could not read path to BG1 from file bgt/bg1path.txt" #| tee -a somelog
-	exit 1
-fi
-rm bgt/bg1path.txt
-
 #prepare needed lowercase folders
 mkdir -p bgt/bg1/data bgt/bg1/override  bgt/bg1/movies  bgt/bg1/music  bgt/bg1/sounds bgt/bg1/characters
 
 #link key, ini and tlk files
 for file in chitin.key dialog.tlk bgmain2.exe #baldur.ini
 do
-	if test "$(ls "$bg1path" | grep -ci ^$file$)" -ne 0
+	if test "$(ls "$1" | grep -ci ^$file$)" -ne 0
 	then
-		ln -s "$bg1path"/$(ls "$bg1path" | grep -im 1 ^$file$ ) bgt/bg1/$file
+		ln -s "$1"/$(ls "$1" | grep -im 1 ^$file$ ) bgt/bg1/$file
 	fi
 done
-if test "$(ls "$bg1path" | grep -ci ^dialogf.tlk$)" -ne 0
+if test "$(ls "$1" | grep -ci ^dialogf.tlk$)" -ne 0
 then
- ln -s "$bg1path/$(ls "$bg1path" | grep -im 1 ^dialogf.tlk$)" bgt/bg1/dialogf.tlk
+ ln -s "$1/$(ls "$1" | grep -im 1 ^dialogf.tlk$)" bgt/bg1/dialogf.tlk
 fi
 
 #link needed resource folders
 for fld in movies data
 do
-	if test -d "$bg1path/$fld"
+	if test -d "$1/$fld"
 	then
-		data="$bg1path/$fld"
+		data="$1/$fld"
 	else
-		data="$bg1path/$(ls "$bg1path" | grep -im 1 ^$fld$)"
+		data="$1/$(ls "$1" | grep -im 1 ^$fld$)"
 	fi
 
 	for file in $(ls "$data" | grep -i \.bif)
@@ -47,11 +36,11 @@ done
 
 for fld in sounds override characters
 do
-	if test -d "$bg1path/$fld"
+	if test -d "$1/$fld"
 	then
-		data="$bg1path/$fld"
+		data="$1/$fld"
 	else
-		data="$bg1path/$(ls "$bg1path" | grep -im 1 ^$fld$)"
+		data="$1/$(ls "$1" | grep -im 1 ^$fld$)"
 	fi
 
 	for file in $(ls "$data" | grep -i \....)
@@ -63,11 +52,11 @@ do
 	done
 done
 
-if test -d "$bg1path/music"
+if test -d "$1/music"
 then
-	data="$bg1path/music"
+	data="$1/music"
 else
-	data="$bg1path/$(ls "$bg1path" | grep -im 1 ^music$)"
+	data="$1/$(ls "$1" | grep -im 1 ^music$)"
 fi
 for file in $(ls "$data" | grep -i \.mus)
 do

@@ -22,9 +22,6 @@ del bgtwav\coran21.wav
 del bgtwav\coran38.wav
 del bgtwav\coran39.wav
 
-del bgtwav\error01.wav
-del bgtwav\error10.wav
-
 del bgtwav\garrk03.wav
 del bgtwav\garrk17.wav
 del bgtwav\garrk18.wav

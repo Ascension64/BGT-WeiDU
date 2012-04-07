@@ -21,7 +21,7 @@ BACKUP ~bgt/backup~
 
 AUTHOR ~http://forums.spellholdstudios.net/index.php?showforum=261~
 
-VERSION ~1.15 (5 Feb 12)~
+VERSION ~1.15 (7 Apr 12)~
 
 README ~bgt/help/[%LANGUAGE%]bgtreadme.htm~ ~bgt/help/[english]bgtreadme.htm~
 
@@ -83,9 +83,9 @@ LANGUAGE ~Polski (Polish)~
          ~bgt/language/polish/dialog.tra~
          ~bgt/language/polish/journal.tra~
          ~bgt/language/polish/scripts.tra~
-LANGUAGE ~ê„··™®© (Russian)~
+LANGUAGE ~Russian~
          ~russian~
-         ~bgt/language/russian/prompts-%WEIDU_OS%.tra~
+         ~bgt/language/russian/prompts.tra~
          ~bgt/language/russian/setup.tra~
          ~bgt/language/russian/dialog.tra~
          ~bgt/language/russian/journal.tra~
@@ -122,7 +122,7 @@ REQUIRE_PREDICATE FILE_EXISTS_IN_GAME ~xnewarea.2da~ @100021
 <<<<<<<<bgt/placeholder.txt
 aaa>>>>>>>>
 
-ACTION_IF ("%WEIDU_OS%" STRING_COMPARE_CASE ~win32~ = 0) BEGIN
+ACTION_IF "%WEIDU_OS%" STRING_EQUAL_CASE ~win32~ BEGIN
   AT_UNINSTALL ~bgt/install/win32/delend.bat~
 END ELSE BEGIN
   AT_UNINSTALL ~sh bgt/install/unix/delend.sh~
@@ -132,19 +132,36 @@ END
 // Initialise installation
 ///////////////////////////////////////////////////////
 
-ACTION_IF "%WEIDU_OS%" STRING_COMPARE_CASE ~win32~ BEGIN //not Win32
-  AT_NOW ~mkdir /tmp/bgt-weidu 2>/dev/null~
+DEFINE_ACTION_MACRO bash_log BEGIN //whenever this macro is invoked, it moves the contents of bgt/bash.debug to the real log.
+  LOCAL_SET ln=0
+  LOCAL_SPRINT log ~~
+  ACTION_IF FILE_EXISTS ~bgt/bash.debug~ AND NOT FILE_SIZE ~bgt/bash.debug~ 0 BEGIN //don't do this if no log is available now.
+    COPY + ~bgt/bash.debug~ ~bgt/bash.debug~
+      ln=BUFFER_LENGTH
+      READ_ASCII 0 log (ln)
+      DELETE_BYTES 0 ln
+      PATCH_LOG ~%log%~
+      SPRINT log ~~
+  END
+END
+
+//manually back up executable, in order to preserve resource fork; keep now just in case
+ACTION_IF ~%WEIDU_OS%~ STRING_EQUAL_CASE ~osx~ AND FILE_EXISTS ~Baldur's Gate II~ BEGIN
+  MKDIR ~bgt/exec.bak~
+  AT_UNINSTALL ~sh bgt/install/osx/restore.sh~
+  AT_NOW       ~sh bgt/install/osx/backup.sh~
+END
+
+ACTION_IF NOT "%WEIDU_OS%" STRING_EQUAL_CASE ~win32~ BEGIN
   AT_EXIT ~rm -f bgt/bash.debug~
   COPY + ~bgt/placeholder.txt~ ~bgt/bash.debug~
     REPLACE_TEXTUALLY CASE_SENSITIVE EXACT_MATCH ~aaa~ ~Unix-like OS detected. Logging of shell commands enabled.%LNL%%LNL%~ //@100044
-  AT_NOW ~cp bgt/install/%WEIDU_OS%/bin/* /tmp/bgt-weidu/ 2>>bgt/bash.debug~//this comment is because my text editor believes the wildcard is a comment*/
-  AT_NOW ~chmod +x /tmp/bgt-weidu/* 2>>bgt/bash.debug~//*/
-  OUTER_SPRINT mosunpack ~/tmp/bgt-weidu/mosunpack~
-  OUTER_SPRINT tisunpack ~/tmp/bgt-weidu/tisunpack~ //tisunpack required
-  OUTER_SPRINT mv ~mv~
+  
   OUTER_SPRINT debug ~ 2>>bgt/bash.debug | tee -a bgt/bash.debug~
   OUTER_SPRINT slash ~/~
   OUTER_SPRINT quote ~"~
+  OUTER_SPRINT exe ~~
+  OUTER_SPRINT del ~rm -f~
   ACTION_IF (~%WEIDU_OS%~ STRING_EQUAL_CASE ~unix~) BEGIN
     AT_EXIT ~rm -f bgt/weidu~
     AT_NOW ~ln -s "$(readlink -f "$(which "%WEIDU_EXECUTABLE%"|head -n 1)")" bgt/weidu 2>&1|tee -a bgt/bash.debug~ EXACT //fails if W_E is a relative path
@@ -160,46 +177,66 @@ END ELSE BEGIN //Win32
     COPY + ~bgt/placeholder.txt~ ~bgt/bash.debug~
       REPLACE_TEXTUALLY CASE_SENSITIVE EXACT_MATCH ~aaa~ ~An old version of Windows has been detected. Limited logging will be available.%WNL%%WNL%~ //@100045
   END
-  OUTER_SPRINT mosunpack ~bgt\install\win32\mosunpack~
-  OUTER_SPRINT tisunpack ~bgt\install\win32\tisunpack~ //tisunpack required
-  OUTER_SPRINT mv ~ren~
+  OUTER_SPRINT del ~del~
   OUTER_SPRINT WEIDU_EXECUTABLE ~setup-bgt.exe~
   OUTER_SPRINT slash ~\~
   OUTER_SPRINT quote ~~
+  OUTER_SPRINT exe ~.exe~
+END
+LAM bash_log
+
+// Find the right path to external binaries, depending on OS and system-path argument
+OUTER_FOR (path=1 n=0; path && VARIABLE_IS_SET EVAL ~argv[%n%]~; ++n) BEGIN // is system-path option selected?
+  ACTION_IF (EVAL ~%argv[%n%]%~ STRING_EQUAL_CASE ~system-path~) BEGIN
+    OUTER_SET path=0
+    LOG ~Looking for requested tools inside the system path because system-path option is set.~
+  END
+END
+ACTION_FOR_EACH tool IN ~tis2bg2~ ~tisunpack~ ~mosunpack~ BEGIN
+  ACTION_IF path BEGIN //use binaries from package
+    ACTION_IF NOT (FILE_EXISTS ~bgt/install/%WEIDU_OS%/%WEIDU_ARCH%/%tool%%exe%~) BEGIN //check if file exists for relevant architecture
+      FAIL ~Required binaries missing for your architecture. Please put tis2bg2, tisunpack and mosunpack into your system path and install again with system-path argument.~
+    END //FILE_EXISTS
+
+    OUTER_SPRINT EVAL ~%tool%~ ~bgt%slash%install%slash%%WEIDU_OS%%slash%%WEIDU_ARCH%%slash%%tool%%exe%~
+    ACTION_IF NOT ~%WEIDU_OS%~ STRING_EQUAL_CASE ~win32~ BEGIN //unix-like: add executable permission
+      AT_NOW ~chmod +x bgt/install/%WEIDU_OS%/%WEIDU_ARCH%/%tool%%debug%~
+    END
+  END ELSE BEGIN //look into system path
+    OUTER_SPRINT EVAL ~%tool%~ ~%tool%~
+  END
 END
 
-DEFINE_ACTION_MACRO bash_log BEGIN //whenever this macro is invoked, it moves the contents of bgt/bash.debug to the real log.
-  LOCAL_SET ln=0
-  LOCAL_SPRINT log ~~
-  ACTION_IF FILE_EXISTS ~bgt/bash.debug~ AND NOT FILE_SIZE ~bgt/bash.debug~ 0 BEGIN //don't do this if no log is available now.
-    COPY + ~bgt/bash.debug~ ~bgt/bash.debug~
-	ln=BUFFER_LENGTH
-	READ_ASCII 0 log (ln)
-	DELETE_BYTES 0 ln
+ACTION_IF "%WEIDU_OS%" STRING_EQUAL_CASE ~win32~ BEGIN //windows: tis2bg2 uses "wrong" paths to files (relative from the executable, not to PWD)
+  COPY + ~bgt/install/%WEIDU_OS%/%WEIDU_ARCH%/tis2bg2.exe~ ~tis2bg2.exe~ //tis2bg2 must be located in BG2 game folder
+  AT_EXIT ~del tis2bg2.exe~
+  OUTER_SPRINT tis2bg2 ~tis2bg2~
+END ELSE BEGIN //unix: check file permissions
+  ACTION_FOR_EACH tool IN ~tis2bg2~ ~tisunpack~ ~mosunpack~ BEGIN
+    OUTER_SPRINT bin EVAL ~%%tool%%~
+    AT_NOW ~(! which %bin% 2>&1 >/dev/null) && echo 1>bgt/test-x.err~ //this will create a test-x.err file if the commands don't work
+    ACTION_IF FILE_EXISTS ~bgt/test-x.err~ BEGIN
+      AT_NOW ~rm -f bgt/test-x.err%debug%~
+      LAM bash_log
+      FAIL ~Unable to execute %tool%.%LNL%Please put tis2bg2, tisunpack and mosunpack into your system path and%LNL%install again with "system-path" argument.~
+    END
   END
-  LOG ~%log%~
 END
 
 DEFINE_ACTION_MACRO linkbg1 BEGIN
-  ACTION_IF "%WEIDU_OS%" STRING_EQUAL_CASE ~unix~ BEGIN //Linux
-    COPY + ~bgt/placeholder.txt~ ~bgt/bg1path.txt~ //has to be passed to the shell script via an external file, otherwise it will be lowered. Things could change (see above)
-      REPLACE_TEXTUALLY CASE_SENSITIVE EXACT_MATCH ~aaa~ ~%bg1_dir%~
-    AT_NOW ~sh bgt/install/unix/linkbg1.sh %debug%~
+  ACTION_IF NOT "%WEIDU_OS%" STRING_EQUAL_CASE ~win32~ BEGIN //non-Windows
+    AT_NOW ~sh bgt/install/%WEIDU_OS%/linkbg1.sh "%bg1_dir%" %debug%~ EXACT
     LAM bash_log
-    COPY + ~linux.ini~ ~bgt/bg1/linux.ini~
-      REPLACE_TEXTUALLY ~%MNL%~ ~%LNL%~
+    ACTION_IF ~%WEIDU_OS%~ STRING_EQUAL_CASE ~unix~ BEGIN
+      COPY + ~linux.ini~ ~bgt/bg1/linux.ini~
       REPLACE_TEXTUALLY ~%WNL%~ ~%LNL%~
+      REPLACE_TEXTUALLY ~%MNL%~ ~%LNL%~
       REPLACE_TEXTUALLY ~%LNL%.*$~ ~~//delete all lines but the first
       offset = BUFFER_LENGTH
       INSERT_BYTES offset 8
       WRITE_ASCII offset ~bgt/bg1/~
-      SPRINT bg1_dir ~bgt/bg1~ //use new BG1 folder
-  END ELSE BEGIN
-    ACTION_IF "%WEIDU_OS%" STRING_EQUAL_CASE ~osx~ BEGIN //Mac
-      AT_NOW ~ln -s "%bg1_dir%" bgt/bg1 %debug%~
-      LAM bash_log
-      OUTER_SPRINT bg1_dir ~bgt/bg1~ //use new BG1 folder
     END
+    OUTER_SPRINT bg1_dir ~bgt/bg1~ //use new BG1 folder
   END
 END //macro
 
@@ -442,11 +479,11 @@ END ELSE BEGIN
   OUTER_SET biff = (~%biff_prompt%~ STRING_EQUAL_CASE ~y~)
 END
 
-ACTION_IF "%WEIDU_OS%" STRING_COMPARE_CASE ~unix~ BEGIN //not Linux
-  AT_NOW ~%mv% "%bg1_dir%%slash%baldur.ini" baldur.bgt %debug%~ EXACT
+ACTION_IF "%WEIDU_OS%" STRING_EQUAL_CASE ~win32~ BEGIN //not Linux or Mac
+  AT_NOW ~ren %bg1_dir%%slash%baldur.ini baldur.bgt %debug%~
   LAM bash_log
   //needed to be sure that it will be restored even if installation fails
-  AT_EXIT ~%mv% "%bg1_dir%%slash%baldur.bgt" baldur.ini %debug%~ EXACT
+  AT_EXIT ~ren %bg1_dir%%slash%baldur.bgt baldur.ini %debug%~
 END
 
 ///////////////////////////////////////////////////////
@@ -808,7 +845,7 @@ STRING_SET ~62097~ @900038  /* Shadows of Amn Introduction movie description */
 STRING_SET ~73247~ @900042  /* Changes SHADOWS OF AMN button at the start screen */
 
 //Changes description under the SHADOWS OF AMN button  ************************************
-COPY_EXISTING ~bgt/title.tr~ ~bgt/title.tra~
+COPY_EXISTING - ~bgt/title.tr~ ~bgt/title.tra~
  SPRINT str ""
  SPRINT bgt ""
  SPRINT tdd ""
@@ -876,8 +913,8 @@ STRING_SET ~15838~ @15838
 //STRING_SET ~15839~ Exists:'You have dealt a great blow...'
 STRING_SET ~15840~ @15840
 STRING_SET ~15841~ @15841
-//STRING_SET ~15879~ See foreign language compatibility section
-//STRING_SET ~15880~ See foreign language compatibility section
+STRING_SET ~15879~ @15879
+STRING_SET ~15880~ @15880
 STRING_SET ~15896~ @15896
 STRING_SET ~15898~ @15898
 STRING_SET ~16190~ @16190
@@ -982,7 +1019,7 @@ OUTER_INNER_PATCH "1234" BEGIN
   END
 END
 
-COPY ~bgt/title.tr~ ~bgt/bio.tra~
+COPY - ~bgt/title.tr~ ~bgt/bio.tra~
   REPLACE_TEXTUALLY ~game prompt~ ~%string_bg2%~
 
 STRING_SET ~15881~ @123456789 USING ~bgt/bio.tra~
@@ -992,30 +1029,12 @@ STRING_SET ~33347~ ~~
 // Foreign language compatibility
 /////////////////////////////////
 
-ACTION_IF (( ~%LANGUAGE%~ STRING_COMPARE_CASE ~castilian~ ) = 0) OR
-          (( ~%LANGUAGE%~ STRING_COMPARE_CASE ~czech~ ) = 0) OR
-          (( ~%LANGUAGE%~ STRING_COMPARE_CASE ~english~ ) = 0) OR
-          (( ~%LANGUAGE%~ STRING_COMPARE_CASE ~international~ ) = 0) OR
-          (( ~%LANGUAGE%~ STRING_COMPARE_CASE ~italian~ ) = 0) OR
-          (( ~%LANGUAGE%~ STRING_COMPARE_CASE ~korean~ ) = 0) OR
-          (( ~%LANGUAGE%~ STRING_COMPARE_CASE ~polish~ ) = 0) OR
-          (( ~%LANGUAGE%~ STRING_COMPARE_CASE ~russian~ ) = 0) OR
-          (( ~%LANGUAGE%~ STRING_COMPARE_CASE ~schinese~ ) = 0) OR
-          (( ~%LANGUAGE%~ STRING_COMPARE_CASE ~tchinese~ ) = 0) THEN BEGIN
-  STRING_SET ~15879~ @15879
-  STRING_SET ~15880~ @15880
-END
-
 ACTION_IF ( ~%LANGUAGE%~ STRING_COMPARE_CASE ~french~ ) = 0 THEN BEGIN
   STRING_SET ~10898~ @10898 //Warder
   STRING_SET ~11026~ @11026 //Warder
-  STRING_SET ~15879~ @300000
-  STRING_SET ~15880~ @300001
 END
 
 ACTION_IF ( ~%LANGUAGE%~ STRING_COMPARE_CASE ~german~ ) = 0 THEN BEGIN
-  STRING_SET ~15879~ @300000
-  STRING_SET ~15880~ @300001
   STRING_SET ~8918~ @300029
 END
 
@@ -2627,6 +2646,11 @@ COPY_EXISTING ~bow08.itm~ ~override/bow08.itm~
 
 //also implements BG2 Fixpack fix
 COPY_EXISTING ~clck08.itm~ ~override/clck08.itm~
+  READ_ASCII 0x3a inv_icon
+  PATCH_IF NOT ("%inv_icon%" STRING_EQUAL_CASE "iclck08") BEGIN
+    WRITE_ASCII 0x3a ~ICLCK08~ #8 //Inventory icon
+  END
+
   READ_LONG 0x64 abil_off
   READ_SHORT 0x68 abil_num
   READ_LONG 0x6a fx_off
@@ -6788,7 +6812,7 @@ COPY ~bgt/modify/2da/toscend.2da~ ~override/toscend.2da~
   REPLACE ~24117~ @24117
 
 ///////////////////////////////////////////////////////
-// Miscellaneous files -- worldmap v6 support included
+// Miscellaneous files
 ///////////////////////////////////////////////////////
 
 PRINT ~~
@@ -6816,34 +6840,90 @@ END ELSE BEGIN
 END
 
 ///////////////////////////////////////////////////////
-// XP Patcher
+// Experience Patch
 ///////////////////////////////////////////////////////
 
 PRINT ~~
 PRINT @100016
 
-COPY ~bgmain.exe~ ~bgmain.exe~
-  SET i = 1
-  WHILE (i>0) BEGIN
-    SET i += 4
-    READ_LONG (0x6b0000 + "%i%" - 1) long_value //start at offset 0x6b0000
-    READ_LONG (0x6b0000 + "%i%" - 5) long_before_value
-    READ_LONG (0x6b0000 + "%i%" + 3) long_after_value
-    PATCH_IF ("%long_before_value%" = 0)
-         AND ("%long_after_value%" = 161000)
-       /*AND ("%long_value%" = 89000)*/
-    THEN BEGIN //look only for a long value bounded by a previous value of 0, and a next value of 161000
-      WRITE_LONG (0x6b0000 + "%i%" - 1) 1 //setting to zero causes thieving skills to isolate from proficiencies and screws up skill types
-    END
-    PATCH_IF ("%i%" = 0x10001) BEGIN //span a region of 0x10000 bytes
-      SET i = 0
-    END
-  END
+OUTER_SET warn_exe=1
 
-  //Movie fix
-  REPLACE_TEXTUALLY ~DAYNITE~ "" (8)
-  REPLACE_TEXTUALLY ~NITEDAY~ "" (8)
-BUT_ONLY_IF_IT_CHANGES
+//GemRB compatibility
+ACTION_IF FILE_EXISTS_IN_GAME ~clskills.2da~ BEGIN
+  COPY_EXISTING ~clskills.2da~ ~override/clskills.2da~ //backup comes from COPY above
+    COUNT_2DA_COLS cols
+    SPRINT read ~~
+    FOR (c = 0; c < (%cols% -1) AND ~%read%~ STRING_COMPARE ~STARTXP~; ++c) BEGIN
+      READ_2DA_ENTRY 0 c 3 read
+    END
+
+    PATCH_IF ~%read%~ STRING_COMPARE ~STARTXP~ BEGIN
+      PATCH_FAIL ~Could not patch starting experience for BGT.~
+    END
+
+    COUNT_2DA_ROWS 3 rows
+    FOR (r = 1; r < %rows%; ++r) BEGIN
+      READ_2DA_ENTRY r c 3 read
+      PATCH_IF IS_AN_INT read BEGIN
+        SET_2DA_ENTRY r c 3 0
+      END
+    END
+
+    PRETTY_PRINT_2DA
+    warn_exe=0
+  BUT_ONLY
+END
+
+ACTION_IF FILE_EXISTS ~bgmain.exe~ BEGIN
+  COPY ~bgmain.exe~ ~bgmain.exe~
+    SET i = 1
+    WHILE (i>0) BEGIN
+      SET i += 4
+      READ_LONG (0x6b0000 + "%i%" - 1) long_value //start at offset 0x6b0000
+      READ_LONG (0x6b0000 + "%i%" - 5) long_before_value
+      READ_LONG (0x6b0000 + "%i%" + 3) long_after_value
+      PATCH_IF ("%long_before_value%" = 0)
+           AND ("%long_after_value%" = 161000)
+           /*AND ("%long_value%" = 89000)*/
+      THEN BEGIN //look only for a long value bounded by a previous value of 0, and a next value of 161000
+        WRITE_LONG (0x6b0000 + "%i%" - 1) 1 //setting to zero causes thieving skills to isolate from proficiencies and screws up skill types
+      END
+      PATCH_IF ("%i%" = 0x10001) BEGIN //span a region of 0x10000 bytes
+        SET i = 0
+      END
+    END
+
+    //Movie fix
+    REPLACE_TEXTUALLY ~DAYNITE~ "" (8)
+    REPLACE_TEXTUALLY ~NITEDAY~ "" (8)
+
+  BUT_ONLY_IF_IT_CHANGES
+END ELSE ACTION_IF FILE_EXISTS ~Baldur's Gate II~ BEGIN //Mac
+  COPY ~Baldur's Gate II~ ~Baldur's Gate II~
+    PATCH_IF %SOURCE_SIZE% != 0xBA8D1A BEGIN
+      PATCH_WARN ~Size of executable is incorrect. Make sure you have ToB installed and patched to the latest official version. SKIPPING patch...~
+    END ELSE BEGIN
+      oldexp = 0xA85B0100 //big endian for 89000
+      PATCH_FOR_EACH off IN 0xAF0DE4 0x51BC94 BEGIN
+        READ_LONG off test
+        PATCH_IF test == oldexp BEGIN
+          WRITE_LONG off 0x01000000 //big endian for 1
+
+          INNER_PATCH_SAVE null ~daynite~ BEGIN
+            FOR (i = 0; i < 7; ++i) BEGIN
+              WRITE_BYTE i 1
+            END
+          END
+          REPLACE_TEXTUALLY CASE_INSENSITIVE EVALUATE_REGEXP ~\(daynite\|niteday\)~ ~%null%~
+        END ELSE BEGIN
+          PATCH_WARN ~Executable appears to have been altered by some other mod. SKIPPING patch...~
+        END
+      END
+    END
+  BUT_ONLY
+END ELSE ACTION_IF warn BEGIN
+  WARN ~WARNING: Unable to implement experience patch.~
+END
 
 //BG1
 EXTEND_BOTTOM ~ar7200.bcs~ ~bgt/modify/baf/abg1mov.baf~
@@ -8206,7 +8286,7 @@ DEFAULT //should never trigger
   WARN ~OS was not correctly detected. You might experience problems with the GUI mod.~
 END
 
-ACTION_IF NOT FILE_EXISTS ~Setup-GUI.tp2~
+ACTION_IF NOT FILE_EXISTS ~GUI_Mods/GUI_Mods.2DA~
 THEN BEGIN
   MKDIR ~GUI_Mods~
 
@@ -8230,6 +8310,7 @@ END~~~~~
 /*  ACTION_IF NOT FILE_CONTAINS ~Setup-GUI.tp2~ ~LANGUAGE~
   THEN BEGIN*/
     COPY ~Setup-GUI.tp2~ ~Setup-GUI.tp2~
+      REPLACE_TEXTUALLY CASE_SENSITIVE EVALUATE_REGEXP ~SUBCOMPONENT.*~ ~SUBCOMPONENT @100024~
       REPLACE_TEXTUALLY "AUTHOR ~\([^~]*\)~"
       "AUTHOR ~\1~
 
@@ -8266,27 +8347,26 @@ LANGUAGE %¡c≈È§§§Â (Chinese - Traditional)%
 LANGUAGE ~¨eÁka (Czech)~
          ~czech~
          ~bgt/language/czech/prompts.tra~"
-/*    BUT_ONLY_IF_IT_CHANGES
-  END // */ UNLESS ~LANGUAGE~
+      UNLESS ~LANGUAGE~
 
-
-  OUTER_SET active_gui=0
-  COPY_EXISTING - ~GUI_Mods/GUI_Mods.2DA~ ~GUI_Mods~
-   READ_2DA_ENTRY 1 1 2 "active_gui"   //CURRENT_ACTIVE_MOD_GUI
+    OUTER_SET active_gui=0
+    COPY_EXISTING - ~GUI_Mods/GUI_Mods.2DA~ ~GUI_Mods~
+    READ_2DA_ENTRY 1 1 2 "active_gui"   //CURRENT_ACTIVE_MOD_GUI
 
   ACTION_IF ("%active_gui%">0) THEN BEGIN
-   UNINSTALL ~Setup-GUI.tp2~ ~%active_gui%~  
+    UNINSTALL ~Setup-GUI.tp2~ ~%active_gui%~
   END
 END
 
 COPY_EXISTING ~GUI_Mods/GUI_Mods.2DA~ ~GUI_Mods~
-READ_2DA_ENTRY 0 1 2 gui_slot_name
-SET_2DA_ENTRY  0 1 2 gui_slot_name+2  //NEXT_AVAILABLE_MOD_SLOT
+  READ_2DA_ENTRY 0 1 2 gui_slot_name
+  SET_2DA_ENTRY  0 1 2 gui_slot_name+2  //NEXT_AVAILABLE_MOD_SLOT
 
 MKDIR ~GUI_Mods/%gui_slot_name%~
 
 COPY_EXISTING ~Setup-GUI.tp2~ ~Setup-GUI.tp2~
-APPEND_FILE_EVALUATE ~bgt/mod_gui1.tp2~
+  APPEND_FILE_EVALUATE ~bgt/mod_gui1.tp2~
+
 COPY ~bgt/bgt_menu/common~       ~GUI_Mods/%gui_slot_name%~
 COPY ~bgt/bgt_menu/startold.mos~ ~GUI_Mods/%gui_slot_name%~
 
@@ -8295,7 +8375,7 @@ OUTER_SET gui_slot_name = gui_slot_name + 1
 MKDIR ~GUI_Mods/%gui_slot_name%~
 
 COPY_EXISTING ~Setup-GUI.tp2~ ~Setup-GUI.tp2~
-APPEND_FILE_EVALUATE ~bgt/mod_gui2.tp2~
+  APPEND_FILE_EVALUATE ~bgt/mod_gui2.tp2~
 COPY ~bgt/bgt_menu/common~       ~GUI_Mods/%gui_slot_name%~
 COPY ~bgt/bgt_menu/startold_alternate.mos~ ~GUI_Mods/%gui_slot_name%/startold.mos~
 
@@ -9277,11 +9357,11 @@ AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp -
 AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bgtwav --biff-get-rest chant0.*wav chant2.wav chap.*wav choke.wav chromor.wav cldel.*wav coran.*wav~
 AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bgtwav --biff-get-rest crowd.wav culti.*wav dalto.*wav delai.*wav delor.*wav delsv.*wav drade.*wav~
 AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bgtwav --biff-get-rest dream.*wav drizt.*wav droth.*wav dryaa.*wav~
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bgtwav --biff-get-rest dunkn.*wav durly.*wav dynah.*wav eldot.*wav eltan.*wav emers.*wav entar.*wav error.*wav~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bgtwav --biff-get-rest dunkn.*wav durly.*wav dynah.*wav eldot.*wav eltan.*wav emers.*wav entar.*wav~
 AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bgtwav --biff-get-rest explosio.wav faldn.*wav festh.*wav flamn.*wav galkn.*wav gandl.*wav gantl.*wav garrk.*wav~
 AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bgtwav --biff-get-rest gatew.*wav gbasi.*wav gelln.*wav~
 AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bgtwav --biff-get-rest glanm.*wav gnarl.*wav gondp.*wav gonds.*wav gore.wav gorin.*wav greyw.*wav guide.*wav gulp.wav gwere.*wav hairt.*wav helsh.*wav hungn.*wav husam.*wav irlen.*wav~
-AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bgtwav --biff-get-rest intro01f.wav intro02f.wav intro03.wav introadd.wav~
+AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bgtwav --biff-get-rest intro03.wav introadd.wav~
 AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bgtwav --biff-get-rest ithmr.*wav jaher.*wav jebad.*wav jhass.*wav kagan.*wav kaish.*wav karou.*wav keepr.*wav keldt.*wav kestr.*wav khald.*wav~
 AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bgtwav --biff-get-rest kivan.*wav korax.*wav krumm01.wav krumm02.wav kryst.*wav liiaj.*wav~
 AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bgtwav --biff-get-rest lothr.*wav magmiss.wav malkl.*wav marek.*wav marll.*wav menda.*wav messn.*wav misc.*wav miss1a.wav monks.*wav montr.*wav mulah.*wav nalin.*wav narln.*wav nikls.*wav nimbl.*wav~
@@ -9292,6 +9372,17 @@ AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp -
 AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bgtwav --biff-get-rest warri.*wav wiltn.*wav wind.wav wknig.*wav yeslk.*wav xannn.*wav xzarr.*wav~
 
 AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bgtwav --biff-get-rest ikeee_04.wav~
+
+ACTION_IF ( ~%LANGUAGE%~ STRING_EQUAL_CASE ~french~ ) OR
+          ( ~%LANGUAGE%~ STRING_EQUAL_CASE ~german~ ) THEN BEGIN
+  AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bgtwav --biff-get-rest intro01.wav intro02.wav~
+  LAM bash_log
+  MOVE + ~bgtwav/intro01.wav~ ~bgtwav/intro01f.wav~ //for string #15879
+         ~bgtwav/intro02.wav~ ~bgtwav/intro02f.wav~ //for string #15880
+END ELSE BEGIN
+  AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bgtwav --biff-get-rest intro01f.wav intro02f.wav~
+  LAM bash_log
+END
 
 ACTION_IF ("%WEIDU_OS%" STRING_COMPARE_CASE ~win32~ = 0) BEGIN
   AT_NOW ~bgt\install\win32\delwav.bat %debug%~ EXACT
@@ -9307,6 +9398,22 @@ ACTION_IF ( ~%LANGUAGE%~ STRING_COMPARE_CASE ~german~ ) BEGIN //all except Germa
   END
 END
 LAM bash_log
+
+ACTION_IF (~%LANGUAGE%~ STRING_EQUAL_CASE ~french~) OR
+          (~%LANGUAGE%~ STRING_EQUAL_CASE ~german~) THEN BEGIN
+  //enable uninstall easily
+  COPY ~bgt/placeholder.txt~ ~override/ikeee_01.wav~
+       ~bgt/placeholder.txt~ ~override/ikeee_02.wav~
+       ~bgt/placeholder.txt~ ~override/ikeee_03.wav~
+       ~bgt/placeholder.txt~ ~override/ikeee_05.wav~
+       ~bgt/placeholder.txt~ ~override/ikeee_06.wav~
+  AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out override --biff-get-rest ikeee_01.wav ikeee_02.wav ikeee_03.wav ikeee_05.wav ikeee_06.wav~
+  LAM bash_log
+  MOVE + (~override~ ~ikeee_0[12356]\.wav~) ~bgtwav~
+  COPY + ~bgt/language/%LANGUAGE%/montr19.wav~ ~bgtwav/montr19.wav~
+         ~bgt/language/%LANGUAGE%/tscna01.wav~ ~bgtwav/tscna01.wav~
+         ~bgt/language/%LANGUAGE%/tscna02.wav~ ~bgtwav/tscna02.wav~
+END
 
 //rename some sounds
 MOVE + ~bgtwav/edwin01.wav~ ~bgtwav/bedwin01.wav~
@@ -9432,24 +9539,10 @@ MOVE + ~bgtwav/umber01.wav~ ~bgtwav/pumber01.wav~
        ~bgtwav/umber05.wav~ ~bgtwav/pumber05.wav~
        ~bgtwav/umber06.wav~ ~bgtwav/pumber06.wav~
 
-ACTION_IF ( ~%LANGUAGE%~ STRING_COMPARE_CASE ~french~ ) = 0 THEN BEGIN
-  AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bgtwav --biff-get-rest intro01.wav intro02.wav~
-  LAM bash_log
-  COPY + ~bgt/language/french/montr19.wav~ ~bgtwav/montr19.wav~
-         ~bgt/language/french/tscna01.wav~ ~bgtwav/tscna01.wav~
-         ~bgt/language/french/tscna02.wav~ ~bgtwav/tscna02.wav~
-END
-
 ACTION_IF ( ~%LANGUAGE%~ STRING_COMPARE_CASE ~german~ ) = 0 THEN BEGIN
   AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bgtwav --biff-get-rest guarr.*wav chant.*wav oghma03.wav oghma04.wav~
-  AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bgtwav --biff-get-rest intro01.wav intro02.wav~
   AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bgtwav --biff-get-rest gnome.*wav gnomf.*wav wench.*wav~
   LAM bash_log
-  COPY + ~bgt/language/german/montr19.wav~ ~bgtwav/montr19.wav~
-         ~bgt/language/german/tscna02.wav~ ~bgtwav/tscna02.wav~
-  ACTION_BASH_FOR ~%bg1_dir%/override~ EVALUATE_REGEXP ~^\(tscna0.*\|error.*\)\.wav$~ BEGIN //this should work
-	COPY + ~%BASH_FOR_FILESPEC%~ ~bgtwav~
-  END
 END
 
 ///////////////////////////////////////////////////////
@@ -9466,7 +9559,7 @@ MKDIR ~bg1movie~
 AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --out bg1movie --biff-get-rest intro15f.mve~
 LAM bash_log
 MOVE + ~bg1movie/intro15f.mve~ ~bg1movie/soaintro.mve~
-COPY + ~bgt/title.tr~ ~bg1movie/intro15f.mve~
+COPY + ~bgt/title.tr~ ~bg1movie/intro15f.mve~ //safer than editing exe; exe changes should be avoided; while corrupt, this works and if it ain't broke don't fix it
 
 AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bg1movie --biff-get-rest beregost.mve bgenter.mve bgsunris.mve bgsunset.mve bhaal.mve camp.mve cndlkeep.mve dungeon.mve durlag.mve eldrcity.mve endcrdit.mve~
 AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out bg1movie --biff-get-rest endmovie.mve frarminn.mve gnoll.mve intro.mve ironthrn.mve mineflod.mve nashkell.mve palace.mve sewer.mve wreck.mve wyvern.mve~
@@ -9652,10 +9745,10 @@ MOVE + ~area4600/ar5506ht.bmp~ ~area6500/ar2660ht.bmp~
        ~area4600/ar5506.wed~ ~area6500/ar2660.wed~
        ~area4600/ar5506.tis~ ~area6500/ar2660.tis~
 
-ACTION_IF ("%WEIDU_OS%" STRING_COMPARE_CASE ~win32~ = 0) BEGIN
+ACTION_IF "%WEIDU_OS%" STRING_EQUAL_CASE ~win32~ BEGIN
   AT_NOW ~bgt\install\win32\deltis.bat %debug%~ EXACT
 END ELSE BEGIN
-  AT_NOW ~sh bgt/install/unix/deltis.sh~
+  AT_NOW ~sh bgt/install/%WEIDU_OS%/deltis.sh~
 END
 LAM bash_log
 
@@ -9666,32 +9759,35 @@ LAM bash_log
 PRINT ~~
 PRINT @100038
 
-ACTION_IF ("%WEIDU_OS%" STRING_COMPARE_CASE ~win32~ = 0) BEGIN
-  COPY + ~bgt/install/win32/tis2bg2.exe~ ~tis2bg2.exe~
-  AT_NOW ~bgt\install\win32\tis2bg2.bat %debug%~ EXACT
-  AT_NOW ~del tis2bg2.exe~
-END ELSE BEGIN
-  AT_NOW ~sh bgt/install/unix/tis2bg2.sh~ //  | tee -a bgt/bash.debug
+ACTION_IF FILE_EXISTS ~tis2bg2.log~ BEGIN //in case user interrupts in the middle of conversion
+  AT_NOW ~%del% tis2bg2.log~
 END
 
-//bash_log has to be done in a slightly different way here:
-ACTION_IF FILE_EXISTS ~bgt/bash.debug~ BEGIN //modified bash_log macro
-  COPY + ~bgt/bash.debug~ ~bgt/bash.debug~
-    REPLACE_TEXTUALLY CASE_SENSITIVE EXACT_MATCH ~%MNL%~ ~%LNL%~ //MNL breaks the following...
-    REPLACE_TEXTUALLY CASE_INSENSITIVE EVALUATE_REGEXP ~^ *Tiles processed:[0-9 ]+of[0-9 ]+[\%LNL%\%WNL% ]+^~ ~~ //removes thousands of "processing tile ..."
-	ln = BUFFER_LENGTH
-	READ_ASCII 0 log (ln)
-	DELETE_BYTES 0 ln
-  LOG ~%log%~
+INCLUDE ~bgt/include/tis2bg2.tpa~ //defines array tisconv, with all rename rules and -s option where necessary
+ACTION_PHP_EACH tisconv AS files => silent BEGIN
+  AT_NOW ~%tis2bg2% -d -l %silent% %files% %files_1%~ //will automatically append debug info to tis2bg2.log
+END
+
+ACTION_IF ("%WEIDU_OS%" STRING_COMPARE_CASE ~win32~ = 0) BEGIN
+  AT_NOW ~del tis2bg2.exe~
+END
+
+ACTION_IF FILE_EXISTS ~tis2bg2.log~ BEGIN //modified bash_log macro
+  COPY + ~tis2bg2.log~ ~tis2bg2.log~
+   READ_ASCII 0 log (%SOURCE_SIZE%)
+   PATCH_LOG ~%log%~
+   SPRINT log ~~
+   DELETE_BYTES 0 %SOURCE_SIZE%
+  AT_NOW ~%del% tis2bg2.log~
 END
 
 MOVE + ~aread000/ar0506ac.tis~ ~aread000/ard006ac.tis~
        ~aread000/ar0506ao.tis~ ~aread000/ard006a0.tis~
 
-ACTION_IF ("%WEIDU_OS%" STRING_COMPARE_CASE ~win32~ = 0) BEGIN
+ACTION_IF "%WEIDU_OS%" STRING_EQUAL_CASE ~win32~ BEGIN
   AT_NOW ~bgt\install\win32\deltis2.bat %debug%~ EXACT
 END ELSE BEGIN
-  AT_NOW ~sh bgt/install/unix/deltis2.sh~
+  AT_NOW ~sh bgt/install/%WEIDU_OS%/deltis2.sh~
 END
 LAM bash_log
 
@@ -9906,7 +10002,7 @@ END
 
 //Clean up directories at the end of the installation
 
-ACTION_IF ("%WEIDU_OS%" STRING_COMPARE_CASE ~win32~ = 0) BEGIN
+ACTION_IF "%WEIDU_OS%" STRING_EQUAL_CASE ~win32~ BEGIN
   AT_NOW ~bgt\install\win32\delend.bat %debug%~ EXACT
 END ELSE BEGIN
   AT_NOW ~sh bgt/install/unix/delend.sh~
