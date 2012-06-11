@@ -891,21 +891,23 @@
         <div class="content">
           <h2>Version history</h2>
 		  <p><a href="#" onclick="toggle('1.15');toggle('1.14');toggle('1.13');toggle('1.12');toggle('1.11');toggle('1.10');toggle('1.09');toggle('1.08u');toggle('1.08');toggle('1.07');toggle('1.06Updated'); toggle('1.06'); toggle('1.05b'); toggle('1.05a'); toggle('1.04'); toggle('1.03'); toggle('1.02f'); toggle('1.02'); toggle('1.01'); toggle('1.00'); toggle('0.99ZETAUpdated'); toggle('0.99ZETA'); toggle('0.99BETA4'); toggle('0.99BETA2'); toggle('0.99BETA'); toggle('0.94BETA'); toggle('0.9BETA'); toggle('0.8'); return false;">Expand/Collapse All</a></p>
-        <h6><a href="#" onclick="toggle('1.15'); return false;">Version 1.15 (7 Apr 12)</a></h6>
+        <h6><a href="#" onclick="toggle('1.15'); return false;">Version 1.15 (11 Jun 12)</a></h6>
 	      <div id="1.15" class="vlisthide">
 		  <p>Installation changes</p>
 		  <ul>
 		    <li>Added experience patch compatibility for GemRB and Mac platforms</li>
 		    <li>Check for pre-existing modification with GUI Switcher changed to GUI_Mods/GUI_Mods.2DA</li>
 		    <li>Corrected Castilian translation which did not install in version 1.14</li>
+		    <li>Corrected importation of Ike and Montaron's soundset for Castilian language</li>
 		    <li>Corrected importation of introduction sounds and Ike's soundset for French and German languages</li>
-		    <li>Updated French translation</li>
-		    <li>Updated German translation</li>
+		    <li>Updated French and German translations</li>
 		    <li>Updated Russian translation to use English prompts due to inconsistent code pages between Russian version of Windows XP and Windows 7</li>
 		    <li>Updated installation for all platforms (Mac, Linux, Win32)</li>
 		  </ul>
 		  <p>Bug fixes</p>
 		  <ul>
+		    <li>Fixed a compatibility issue with BG2Fixpack where Invisible Stalkers did not give experience</li>
+		    <li>Fixed a number of script bugs (such as Drizzt not fighting gnolls) caused by using [^!]* in wildcard REPLACE_TEXTUALLY</li>
 		    <li>Fixed a number of typos in the English translation</li>
 		    <li>Fixed inventory icon for Algernon's Cloak a la BG2 Fixpack</li>
 		    <li>Fixed proficiency type in description of Two Handed Sword +3: World's Edge</li>
@@ -969,6 +971,7 @@
 		  <p>Gameplay changes</p>
 		  <ul>
 		    <li>Added end of Tales of the Sword Coast text screen</li>
+		    <li>Added spell selection dialogue to new characters created for Shadows of Amn (no support for spells added by modifications)</li>
 		    <li>Added subtitles for the Baldur's Gate introduction movie</li>
 		    <li>Removed fixpack change to Half-Orc Find Traps skill bonus</li>
 		  </ul>

@@ -21,7 +21,7 @@ BACKUP ~bgt/backup~
 
 AUTHOR ~http://forums.spellholdstudios.net/index.php?showforum=261~
 
-VERSION ~1.15 (7 Apr 12)~
+VERSION ~1.15 (11 Jun 12)~
 
 README ~bgt/help/[%LANGUAGE%]bgtreadme.htm~ ~bgt/help/[english]bgtreadme.htm~
 
@@ -132,6 +132,8 @@ END
 // Initialise installation
 ///////////////////////////////////////////////////////
 
+OUTER_SPRINT ~newline~ ~%WNL%%LNL%%MNL%%TAB% ~
+
 DEFINE_ACTION_MACRO bash_log BEGIN //whenever this macro is invoked, it moves the contents of bgt/bash.debug to the real log.
   LOCAL_SET ln=0
   LOCAL_SPRINT log ~~
@@ -209,7 +211,6 @@ END
 
 ACTION_IF "%WEIDU_OS%" STRING_EQUAL_CASE ~win32~ BEGIN //windows: tis2bg2 uses "wrong" paths to files (relative from the executable, not to PWD)
   COPY + ~bgt/install/%WEIDU_OS%/%WEIDU_ARCH%/tis2bg2.exe~ ~tis2bg2.exe~ //tis2bg2 must be located in BG2 game folder
-  AT_EXIT ~del tis2bg2.exe~
   OUTER_SPRINT tis2bg2 ~tis2bg2~
 END ELSE BEGIN //unix: check file permissions
   ACTION_FOR_EACH tool IN ~tis2bg2~ ~tisunpack~ ~mosunpack~ BEGIN
@@ -480,10 +481,10 @@ END ELSE BEGIN
 END
 
 ACTION_IF "%WEIDU_OS%" STRING_EQUAL_CASE ~win32~ BEGIN //not Linux or Mac
-  AT_NOW ~ren %bg1_dir%%slash%baldur.ini baldur.bgt %debug%~
+  AT_NOW ~ren "%bg1_dir%%slash%baldur.ini" baldur.bgt %debug%~ EXACT
   LAM bash_log
   //needed to be sure that it will be restored even if installation fails
-  AT_EXIT ~ren %bg1_dir%%slash%baldur.bgt baldur.ini %debug%~
+  AT_EXIT ~ren "%bg1_dir%%slash%baldur.bgt" baldur.ini %debug%~ EXACT
 END
 
 ///////////////////////////////////////////////////////
@@ -550,6 +551,7 @@ MOVE + ~bg1cre/calaha.cre~ ~bg1cre/bgcalaha.cre~
        ~bg1cre/skelwa.cre~ ~bg1cre/bgskelwa.cre~
        ~bg1cre/skelwa02.cre~ ~bg1cre/bgskel02.cre~
        ~bg1cre/skelwa03.cre~ ~bg1cre/bgskel03.cre~
+       ~bg1cre/stalke.cre~ ~bg1cre/bgstalke.cre~
        ~bg1cre/tarnor.cre~ ~bg1cre/bgtarnor.cre~
        ~bg1cre/tazok.cre~ ~bg1cre/bgtazok.cre~
        ~bg1cre/towncr.cre~ ~bg1cre/bgtowncr.cre~
@@ -1774,7 +1776,7 @@ ACTION_IF FILE_EXISTS_IN_GAME ~DD0012.are~ THEN BEGIN
     Global("ENDOFBG1","GLOBAL",2)~
     REPLACE_TEXTUALLY ~Gloxbal("harperxzarfued","GLOBAL",0)~ ~Global("harperxzarfued","GLOBAL",0)~
 
-    REPLACE_TEXTUALLY ~InParty("kagaindd")[^!]*InParty("yeslicdd")~ //prevent Kagain and Yeslick attacking in BG1
+    REPLACE_TEXTUALLY ~InParty("kagaindd")[%newline%]*InParty("yeslicdd")~ //prevent Kagain and Yeslick attacking in BG1
     ~InParty("kagaindd")
     Global("ENDOFBG1","GLOBAL",2)
     InParty("yeslicdd")~
@@ -2009,8 +2011,7 @@ COPY_EXISTING ~bancut01.bcs~ ~override/bancut01.bcs~
   REPLACE_TEXTUALLY ~CreateCreature("TAZOK"~ ~CreateCreature("BGTAZOK"~
   REPLACE_TEXTUALLY ~trcarvan~ ~~
   REPLACE_TEXTUALLY ~ChangeAIScript("bandct",OVERRIDE)~ ~~ //seems like a typo
-  REPLACE_TEXTUALLY
-~CutSceneId(Player1)[^!]*LeaveAreaLUAPanic("AR8700","",\[1095\.1380\],10)~
+  REPLACE_TEXTUALLY ~CutSceneId(Player1)[%newline%]*LeaveAreaLUAPanic("AR8700","",\[1095\.1380\],10)~
 ~CutSceneId(Player1)
 SetGlobal("EnteredBanditCamp","GLOBAL",1)
 LeaveAreaLUAPanic("AR8700","",[1095.1380],10)~
@@ -2027,7 +2028,7 @@ COPY_EXISTING ~ch4end.bcs~ ~override/ch4end.bcs~
 
 COPY_EXISTING ~davcut01.bcs~ ~override/davcut01.bcs~
   DECOMPILE_BCS_TO_BAF
-  REPLACE_TEXTUALLY ~RevealAreaOnMap("AR0900")[^!]*IncrementChapter("Chptxt5")[^!]*AddJournalEntry(15839,USER)~
+  REPLACE_TEXTUALLY ~RevealAreaOnMap("AR0900")[%newline%]*IncrementChapter("Chptxt5")[%newline%]*AddJournalEntry(15839,USER)~
 ~RevealAreaOnMap("AR7900")
     SetGlobal("Chapter","GLOBAL",4)
     IncrementChapter("Chptxt-5")
@@ -2038,7 +2039,7 @@ COPY_EXISTING ~davcut01.bcs~ ~override/davcut01.bcs~
 COPY_EXISTING ~endch4.bcs~ ~override/endch4.bcs~
   DECOMPILE_BCS_TO_BAF
   REPLACE_TEXTUALLY ~Global("Chapter","GLOBAL",4)~ ~Global("Chapter","GLOBAL",5)~
-  REPLACE_TEXTUALLY ~RevealAreaOnMap("AR0900")[^!]*IncrementChapter("Chptxt5")[^!]*AddJournalEntry(15839,USER)~
+  REPLACE_TEXTUALLY ~RevealAreaOnMap("AR0900")[%newline%]*IncrementChapter("Chptxt5")[%newline%]*AddJournalEntry(15839,USER)~
 ~RevealAreaOnMap("AR7900")
     SetGlobal("Chapter","GLOBAL",4)
     IncrementChapter("Chptxt-5")
@@ -2048,7 +2049,7 @@ COPY_EXISTING ~endch4.bcs~ ~override/endch4.bcs~
 
 COPY_EXISTING ~endcut01.bcs~ ~override/endcut01.bcs~
   DECOMPILE_BCS_TO_BAF
-  REPLACE_TEXTUALLY ~ForceSpell("Sarevok",DRYAD_TELEPORT)[^!]*ForceSpell(Myself,DRYAD_TELEPORT)~
+  REPLACE_TEXTUALLY ~ForceSpell("Sarevok",DRYAD_TELEPORT)[%newline%]*ForceSpell(Myself,DRYAD_TELEPORT)~
 ~ForceSpell("Sarevok",DRYAD_TELEPORT)
     SetGlobal("SarevokBehavior","GLOBAL",1)
     ForceSpell(Myself,DRYAD_TELEPORT)~
@@ -2056,7 +2057,7 @@ COPY_EXISTING ~endcut01.bcs~ ~override/endcut01.bcs~
 
 COPY_EXISTING ~erik.bcs~ ~override/erik.bcs~
   DECOMPILE_BCS_TO_BAF
-  REPLACE_TEXTUALLY ~HitBy(\[PC\],CRUSHING)[^!]*Global("JonHit","GLOBAL",0)~
+  REPLACE_TEXTUALLY ~HitBy(\[PC\],CRUSHING)[%newline%]*Global("JonHit","GLOBAL",0)~
 ~OR(2)
     HitBy([PC],CRUSHING)
     HitBy([FAMILIAR],CRUSHING)
@@ -2084,7 +2085,7 @@ Global("Chapter","GLOBAL",4)~
 
 COPY_EXISTING ~jondalar.bcs~ ~override/jondalar.bcs~
   DECOMPILE_BCS_TO_BAF
-  REPLACE_TEXTUALLY ~HitBy(\[PC\],CRUSHING)[^!]*Global("JonHit","GLOBAL",0)~
+  REPLACE_TEXTUALLY ~HitBy(\[PC\],CRUSHING)[%newline%]*Global("JonHit","GLOBAL",0)~
 ~OR(2)
     HitBy([PC],CRUSHING)
     HitBy([FAMILIAR],CRUSHING)
@@ -2272,7 +2273,7 @@ END ELSE BEGIN
 
   COPY_EXISTING ~cut01.bcs~ ~override/cut01.bcs~
     DECOMPILE_BCS_TO_BAF
-    REPLACE_TEXTUALLY ~ActionOverride("Imoen2",SetDialogu?e?("IMOEN2"))[^!]*ActionOverride("Imoen2",ChangeAIScript("",DEFAULT))~
+    REPLACE_TEXTUALLY ~ActionOverride("Imoen2",SetDialogu?e?("IMOEN2"))[%newline%]*ActionOverride("Imoen2",ChangeAIScript("",DEFAULT))~
 ~ActionOverride("Imoen2",SetDialog("IMOEN2"))
 ActionOverride("Imoen2",SetNumTimesTalkedTo(0))
 ActionOverride("Imoen2",ChangeAIScript("",DEFAULT))~
@@ -2321,35 +2322,35 @@ EXTEND_TOP ~yeslick.bcs~ ~bgt/modify/baf/apetrify.baf~
 ACTION_IF FILE_EXISTS_IN_GAME ~DD0012.are~ THEN BEGIN
   COPY_EXISTING ~aram00.bcs~ ~override/aram00.bcs~
     DECOMPILE_BCS_TO_BAF
-    REPLACE_TEXTUALLY ~ActionOverride("Kivan",LeaveParty())[^!]*ActionOverride("Kivan",ChangeAIScript("",DEFAULT))[^!]*ActionOverride("Kivan",ClearAllActions())[^!]*ActionOverride("Kivan",DestroySelf())~
+    REPLACE_TEXTUALLY ~ActionOverride("Kivan",LeaveParty())[%newline%]*ActionOverride("Kivan",ChangeAIScript("",DEFAULT))[%newline%]*ActionOverride("Kivan",ClearAllActions())[%newline%]*ActionOverride("Kivan",DestroySelf())~
 ~ActionOverride("Kivan",LeaveParty())
     ActionOverride("Kivan",ChangeAIScript("",DEFAULT))
     ActionOverride("Kivan",ClearAllActions())
     SetGlobal("KivanPartyBG1","GLOBAL",1)
     ActionOverride("Kivan",ChangeAIScript("SBTKIV",CLASS))
     ActionOverride("Kivan",MoveBetweenAreas("AR1100",[4172.1239],4))~
-    REPLACE_TEXTUALLY ~ActionOverride("Kagain",LeaveParty())[^!]*ActionOverride("Kagain",ChangeAIScript("",DEFAULT))[^!]*ActionOverride("Kagain",ClearAllActions())[^!]*ActionOverride("Kagain",DestroySelf())~
+    REPLACE_TEXTUALLY ~ActionOverride("Kagain",LeaveParty())[%newline%]*ActionOverride("Kagain",ChangeAIScript("",DEFAULT))[%newline%]*ActionOverride("Kagain",ClearAllActions())[%newline%]*ActionOverride("Kagain",DestroySelf())~
 ~ActionOverride("Kagain",LeaveParty())
     ActionOverride("Kagain",ChangeAIScript("",DEFAULT))
     ActionOverride("Kagain",ClearAllActions())
     SetGlobal("KagainPartyBG1","GLOBAL",1)
     ActionOverride("Kagain",ChangeAIScript("SBTKAG",CLASS))
     ActionOverride("Kagain",MoveBetweenAreas("AR0020",[547.494],12))~
-    REPLACE_TEXTUALLY ~ActionOverride("Yeslick",LeaveParty())[^!]*ActionOverride("Yeslick",ChangeAIScript("",DEFAULT))[^!]*ActionOverride("Yeslick",ClearAllActions())[^!]*ActionOverride("Yeslick",DestroySelf())~
+    REPLACE_TEXTUALLY ~ActionOverride("Yeslick",LeaveParty())[%newline%]*ActionOverride("Yeslick",ChangeAIScript("",DEFAULT))[%newline%]*ActionOverride("Yeslick",ClearAllActions())[%newline%]*ActionOverride("Yeslick",DestroySelf())~
 ~ActionOverride("Yeslick",LeaveParty())
     ActionOverride("Yeslick",ChangeAIScript("",DEFAULT))
     ActionOverride("Yeslick",ClearAllActions())
     SetGlobal("YeslickPartyBG1","GLOBAL",1)
     ActionOverride("Yeslick",ChangeAIScript("SBTYES",RACE))
     ActionOverride("Yeslick",MoveBetweenAreas("AR0900",[3445.1896],4))~
-    REPLACE_TEXTUALLY ~ActionOverride("Sharteel",LeaveParty())[^!]*ActionOverride("Sharteel",ChangeAIScript("",DEFAULT))[^!]*ActionOverride("Sharteel",ClearAllActions())[^!]*ActionOverride("Sharteel",DestroySelf())~
+    REPLACE_TEXTUALLY ~ActionOverride("Sharteel",LeaveParty())[%newline%]*ActionOverride("Sharteel",ChangeAIScript("",DEFAULT))[%newline%]*ActionOverride("Sharteel",ClearAllActions())[%newline%]*ActionOverride("Sharteel",DestroySelf())~
 ~ActionOverride("Sharteel",LeaveParty()
     ActionOverride("Sharteel",ChangeAIScript("",DEFAULT))
     ActionOverride("Sharteel",ClearAllActions())
     SetGlobal("SharteelPartyBG1","GLOBAL",1)
     ActionOverride("Sharteel",ChangeAIScript("SBTSHR",CLASS))
     ActionOverride("Sharteel",MoveBetweenAreas("AR1005",[1131.335],8))~
-    REPLACE_TEXTUALLY ~ActionOverride("Xzar",LeaveParty())[^!]*ActionOverride("Xzar",ChangeAIScript("",DEFAULT))[^!]*ActionOverride("Xzar",ClearAllActions())[^!]*ActionOverride("Xzar",DestroySelf())~
+    REPLACE_TEXTUALLY ~ActionOverride("Xzar",LeaveParty())[%newline%]*ActionOverride("Xzar",ChangeAIScript("",DEFAULT))[%newline%]*ActionOverride("Xzar",ClearAllActions())[%newline%]*ActionOverride("Xzar",DestroySelf())~
 ~ActionOverride("Xzar",LeaveParty())
     ActionOverride("Xzar",ChangeAIScript("",DEFAULT))
     ActionOverride("Xzar",ClearAllActions())
@@ -2363,7 +2364,7 @@ END
 ACTION_IF FILE_EXISTS_IN_GAME ~kachi01.wav~ THEN BEGIN
   COPY_EXISTING ~aram00.bcs~ ~override/aram00.bcs~
     DECOMPILE_BCS_TO_BAF
-    REPLACE_TEXTUALLY ~ActionOverride("Coran",LeaveParty())[^!]*ActionOverride("Coran",ChangeAIScript("",DEFAULT))[^!]*ActionOverride("Coran",ClearAllActions())[^!]*ActionOverride("Coran",DestroySelf())~
+    REPLACE_TEXTUALLY ~ActionOverride("Coran",LeaveParty())[%newline%]*ActionOverride("Coran",ChangeAIScript("",DEFAULT))[%newline%]*ActionOverride("Coran",ClearAllActions())[%newline%]*ActionOverride("Coran",DestroySelf())~
 ~ActionOverride("Coran",LeaveParty())
     ActionOverride("Coran",ChangeAIScript("",DEFAULT))
     ActionOverride("Coran",ClearAllActions())
@@ -3810,10 +3811,6 @@ COPY ~%bg1_dir%/characters/cleric.chr~ ~characters/bgcleric.chr~
 PRINT ~~
 PRINT @100013
 
-///////////////////////////////////////////////////////////////////////
-// Creature Installation: Modification of BG1 files non-existant in BG2
-///////////////////////////////////////////////////////////////////////
-
 COPY + ~bgt/base/cre~ ~bg1cre~
 
 ///////////////////////////////////////////////////////////////////////
@@ -4390,6 +4387,9 @@ COPY + ~bg1cre/bgskel02.cre~ ~bg1cre/bgskel02.cre~
  WRITE_ASCII 0x40c ~HELM09~ // Item
 COPY + ~bg1cre/bgskel03.cre~ ~bg1cre/bgskel03.cre~
  WRITE_ASCII 0x448 ~HELM09~ // Item
+COPY + ~bg1cre/bgstalke.cre~ ~bg1cre/bgstalke.cre~
+  WRITE_BYTE 0x237 1 //Sex: Male
+  WRITE_BYTE 0x275 4 //Gender: Neither
 COPY + ~bg1cre/bgtarnor.cre~ ~bg1cre/bgtarnor.cre~
   WRITE_ASCII 0x2cc ~BGTARNOR~ // dialogue file
 COPY + ~bg1cre/bgtazok.cre~ ~bg1cre/bgtazok.cre~
@@ -4825,21 +4825,6 @@ COPY_EXISTING + ~squirr.cre~ ~bg1cre/squirr.cre~
   SAY 0x1b8 #20285
   SAY 0x1bc #20286
   SAY 0x1c0 #20320
-COPY_EXISTING + ~stalke.cre~ ~bg1cre/stalke.cre~
-  SAY 0xc8 #11391
-  SAY 0xcc #11392
-  SAY 0xd0 #11416
-  SAY 0xd4 #11417
-  SAY 0xec #5587
-  SAY 0xf0 #5601
-  SAY 0x10c #11391
-  SAY 0x110 #11392
-  SAY 0x114 #11416
-  SAY 0x118 #11417
-  SAY 0x1b8 #11391
-  SAY 0x1bc #11392
-  SAY 0x1c0 #11416
-  SAY 0x1c4 #11417
 COPY_EXISTING + ~tasloisu.cre~ ~bg1cre/tasloisu.cre~
   SAY 0xc8 #5484
   SAY 0xcc #5485
@@ -6826,7 +6811,7 @@ ACTION_IF FILE_EXISTS ~worldmap/map_mods_areas.tbl~ THEN BEGIN
     APPEND_FILE ~bgt/worldmap/areas.tbl~
   COPY ~worldmap/map_mods_links.tbl~  ~worldmap~
     APPEND_FILE ~bgt/worldmap/links.tbl~
-   
+
   //preliminary step - making LANGUAGE temporary file until the new WeiDU
   COPY - ~bgt/worldmap/%LANGUAGE%/worldmap.tra~  ~tmp_worldmap.tra~
   COPY ~worldmap/map_mods_trans.tra~  ~worldmap~
@@ -7610,39 +7595,38 @@ COPY_EXISTING ~ch1cut01.bcs~ ~override/ch1cut01.bcs~
   DECOMPILE_BCS_TO_BAF
   REPLACE_TEXTUALLY ~"AR2700"~ ~"AR6600"~
   REPLACE_TEXTUALLY ~TRGORION~ ~~
-  REPLACE_TEXTUALLY ~ClearAllActions()[^!]*DayNight(MIDNIGHT)~ ~ClearAllActions()
+/* FadeToColor before area transition crashes game - needs investigating
+  REPLACE_TEXTUALLY ~ClearAllActions()[%newline%]*DayNight(MIDNIGHT)~ ~ClearAllActions()
 FadeToColor([0.0],0)
-DayNight(MIDNIGHT)~
+DayNight(MIDNIGHT)~*/
   REPLACE_TEXTUALLY ~VerbalConstant(Myself,61)~ ~DisplayStringHead(Myself,4445)~
   COMPILE_BAF_TO_BCS
 
 COPY_EXISTING ~ch1cut02.bcs~ ~override/ch1cut02.bcs~
   DECOMPILE_BCS_TO_BAF
-  REPLACE_TEXTUALLY ~CutSceneId("Gorion")[^!]*VerbalConstant(Myself,62)[^!]*MoveToPoint(\[3103\.1410\])[^!]*VerbalConstant(Myself,BATTLE_CRY)~
+  REPLACE_TEXTUALLY ~CutSceneId("Gorion")[%newline%]*VerbalConstant(Myself,62)[%newline%]*MoveToPoint(\[3103\.1410\])[%newline%]*VerbalConstant(Myself,BATTLE_CRY)~
 ~CutSceneId("Gorion")
     MoveViewPoint([2400.1471],INSTANT)
     FadeFromColor([10.0],0)
-    VerbalConstant(Myself,62)
+    DisplayStringHead(Myself,4446)
     Wait(5)
     MoveToPoint([3103.1410])
     Wait(3)
-    VerbalConstant(Myself,BATTLE_CRY)
+    DisplayStringHead(Myself,4440)
     Wait(3)
     CreateCreature("M05PCspy",[3150.1440],1)~
-  REPLACE_TEXTUALLY ~MoveViewObject(Player1,INSTANT)[^!]*MoveViewPoint(\[3204\.1353\],VERY_FAST)~
+  REPLACE_TEXTUALLY ~MoveViewObject(Player1,INSTANT)[%newline%]*MoveViewPoint(\[3204\.1353\],VERY_FAST)~
 ~MoveViewObject(Player1,INSTANT)
     Wait(5)
     MoveViewPoint([3204.1353],VERY_FAST)~
   REPLACE_TEXTUALLY ~"None"~ ~""~
-  REPLACE_TEXTUALLY ~VerbalConstant(Myself,62)~ ~DisplayStringHead(Myself,4446)~
-  REPLACE_TEXTUALLY ~VerbalConstant(Myself,BATTLE_CRY)~ ~DisplayStringHead(Myself,4440)~
   COMPILE_BAF_TO_BCS
 
 COPY_EXISTING ~ch1cut04.bcs~ ~override/ch1cut04.bcs~
   DECOMPILE_BCS_TO_BAF
   REPLACE_TEXTUALLY ~ForceSpell("Tamoko",WIZARD_SLEEP)~ ~ForceSpellRES("BGCH1CUT","Tamoko")~
   REPLACE_TEXTUALLY ~3089\.1650~ ~3171.1887~
-  REPLACE_TEXTUALLY ~IncrementChapter("Chptxt1")[^!]*AddJournalEntry(16190,USER)~
+  REPLACE_TEXTUALLY ~IncrementChapter("Chptxt1")[%newline%]*AddJournalEntry(16190,USER)~
 ~ActionOverride("M05PCspy",DestroySelf())
     RevealAreaOnMap("AR6526")
     HideAreaOnMap("AR0015")
@@ -7664,7 +7648,7 @@ EXTEND_TOP ~dopkie.bcs~ ~bgt/fixpack/adopkie.baf~
 
 COPY_EXISTING ~drizzt.bcs~ ~override/drizzt.bcs~
   DECOMPILE_BCS_TO_BAF
-  REPLACE_TEXTUALLY ~See(\[0\.0\.GNOLL\])[^!]*THEN~
+  REPLACE_TEXTUALLY ~See(\[0\.0\.GNOLL\])[%newline%]*THEN~
 ~See([0.0.GNOLL])
   Global("DrizztFight","GLOBAL",1)
   !NumTimesTalkedTo(0)
@@ -7693,7 +7677,7 @@ EXTEND_BOTTOM ~melicamp.bcs~ ~bgt/fixpack/amelicamp.baf~
 
 COPY_EXISTING ~narlen.bcs~ ~override/narlen.bcs~
   DECOMPILE_BCS_TO_BAF
-  REPLACE_TEXTUALLY ~Global("NarlenMove","GLOBAL",7)[^!]*Global("ResarAttack","GLOBAL",1)~ ~Global("NarlenMove","GLOBAL",7)
+  REPLACE_TEXTUALLY ~Global("NarlenMove","GLOBAL",7)[%newline%]*Global("ResarAttack","GLOBAL",1)~ ~Global("NarlenMove","GLOBAL",7)
   !Dead("Resar")
   Global("ResarAttack","GLOBAL",1)~
   COMPILE_BAF_TO_BCS
@@ -7707,7 +7691,7 @@ COPY_EXISTING ~pheoarch.bcs~ ~override/pheoarch.bcs~
 
 COPY_EXISTING ~rufcut01.bcs~ ~override/rufcut01.bcs~
   DECOMPILE_BCS_TO_BAF
-  REPLACE_TEXTUALLY ~ForceSpellPoint(\[4732\.3747\],WIZARD_DIMENSION_DOOR)[^!]*EndCutSceneMode()[^!]*Wait(1)[^!]*SetInterrupt(TRUE)[^!]*DestroySelf()~ ~EndCutSceneMode()~
+  REPLACE_TEXTUALLY ~ForceSpellPoint(\[4732\.3747\],WIZARD_DIMENSION_DOOR)[%newline%]*EndCutSceneMode()[%newline%]*Wait(1)[%newline%]*SetInterrupt(TRUE)[%newline%]*DestroySelf()~ ~EndCutSceneMode()~
   COMPILE_BAF_TO_BCS
 
 COPY_EXISTING ~semaj.bcs~ ~override/semaj.bcs~
@@ -7719,7 +7703,7 @@ Allegiance(Myself,ENEMY)~
 
 COPY_EXISTING ~ship.bcs~ ~override/ship.bcs~
   DECOMPILE_BCS_TO_BAF
-  REPLACE_TEXTUALLY ~RESPONSE #100[^!]*ActionOverride(Player1,~ ~RESPONSE #100
+  REPLACE_TEXTUALLY ~RESPONSE #100[%newline%]*ActionOverride(Player1,~ ~RESPONSE #100
 ClearAllActions()
 ActionOverride(Player1,~
   COMPILE_BAF_TO_BCS
@@ -7892,13 +7876,14 @@ COMPILE ~bgt/fixpack/jalant.baf~
 COPY_EXISTING ~belt.bcs~ ~override/belt.bcs~
               ~liia.bcs~ ~override/liia.bcs~
   DECOMPILE_BCS_TO_BAF
-  REPLACE_TEXTUALLY ~See(\[ENEMY\])~ ~Seex([ENEMY])
-Global("SarevokBehavior","GLOBAL",0)
-Global("NobleDopple","GLOBAL",1)~
+  REPLACE_TEXTUALLY ~See(\[ENEMY\])~
+  ~Seex([ENEMY])
+  Global("SarevokBehavior","GLOBAL",0)
+  Global("NobleDopple","GLOBAL",1)~
   REPLACE_TEXTUALLY ~Seex(\[ENEMY\])~ ~See([ENEMY])~
 
   //belt.bcs only
-  REPLACE_TEXTUALLY ~Range(\[PC\],15)[^!]*Num\(berOf\)*TimesTalkedTo(0)~ ~Range([PC],15)
+  REPLACE_TEXTUALLY ~Range(\[PC\],15)[%newline%]*Num\(berOf\)*TimesTalkedTo(0)~ ~Range([PC],15)
 !Allegiance(Myself,ENEMY)
 NumTimesTalkedTo(0)~
   COMPILE_BAF_TO_BCS
@@ -9399,7 +9384,8 @@ ACTION_IF ( ~%LANGUAGE%~ STRING_COMPARE_CASE ~german~ ) BEGIN //all except Germa
 END
 LAM bash_log
 
-ACTION_IF (~%LANGUAGE%~ STRING_EQUAL_CASE ~french~) OR
+ACTION_IF (~%LANGUAGE%~ STRING_EQUAL_CASE ~castilian~) OR
+          (~%LANGUAGE%~ STRING_EQUAL_CASE ~french~) OR
           (~%LANGUAGE%~ STRING_EQUAL_CASE ~german~) THEN BEGIN
   //enable uninstall easily
   COPY ~bgt/placeholder.txt~ ~override/ikeee_01.wav~
@@ -9410,6 +9396,14 @@ ACTION_IF (~%LANGUAGE%~ STRING_EQUAL_CASE ~french~) OR
   AT_NOW ~%quote%%WEIDU_EXECUTABLE%%quote% --noautoupdate --no-auto-tp2 --logapp --log bgt/bash.debug --game "%bg1_dir%" --out override --biff-get-rest ikeee_01.wav ikeee_02.wav ikeee_03.wav ikeee_05.wav ikeee_06.wav~
   LAM bash_log
   MOVE + (~override~ ~ikeee_0[12356]\.wav~) ~bgtwav~
+END
+
+ACTION_IF (~%LANGUAGE%~ STRING_EQUAL_CASE ~castilian~) THEN BEGIN
+  COPY + ~bgt/language/%LANGUAGE%/montr19.wav~ ~bgtwav/montr19.wav~
+END
+
+ACTION_IF (~%LANGUAGE%~ STRING_EQUAL_CASE ~french~) OR
+          (~%LANGUAGE%~ STRING_EQUAL_CASE ~german~) THEN BEGIN
   COPY + ~bgt/language/%LANGUAGE%/montr19.wav~ ~bgtwav/montr19.wav~
          ~bgt/language/%LANGUAGE%/tscna01.wav~ ~bgtwav/tscna01.wav~
          ~bgt/language/%LANGUAGE%/tscna02.wav~ ~bgtwav/tscna02.wav~

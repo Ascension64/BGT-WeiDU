@@ -325,7 +325,6 @@ rm bg1cre/sleepdw.cre 2>>bgt/bash.debug
 rm bg1cre/sleepfh.cre 2>>bgt/bash.debug
 rm bg1cre/sleepmh.cre 2>>bgt/bash.debug
 rm bg1cre/squirr.cre 2>>bgt/bash.debug
-rm bg1cre/stalke.cre 2>>bgt/bash.debug
 rm bg1cre/tasloisu.cre 2>>bgt/bash.debug
 rm bg1cre/tethto2.cre 2>>bgt/bash.debug
 rm bg1cre/tethto3.cre 2>>bgt/bash.debug

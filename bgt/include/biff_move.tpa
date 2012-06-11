@@ -938,6 +938,7 @@ MOVE + ~override/a6bio.cre~ ~bgtcre/a6bio.cre~
        ~override/bgskel02.cre~ ~bgtcre/bgskel02.cre~
        ~override/bgskel03.cre~ ~bgtcre/bgskel03.cre~
        ~override/bgskelwa.cre~ ~bgtcre/bgskelwa.cre~
+       ~override/bgstalke.cre~ ~bgtcre/bgstalke.cre~
        ~override/bgtarnor.cre~ ~bgtcre/bgtarnor.cre~
        ~override/bgtazok.cre~ ~bgtcre/bgtazok.cre~
        ~override/bgtowncr.cre~ ~bgtcre/bgtowncr.cre~
@@ -2076,7 +2077,6 @@ MOVE + ~override/a6bio.cre~ ~bgtcre/a6bio.cre~
        ~override/spidwr.cre~ ~bgtcre/spidwr.cre~
        ~override/sprat.cre~ ~bgtcre/sprat.cre~
        ~override/squirr.cre~ ~bgtcre/squirr.cre~
-       ~override/stalke.cre~ ~bgtcre/stalke.cre~
        ~override/stepha.cre~ ~bgtcre/stepha.cre~
        ~override/stonec.cre~ ~bgtcre/stonec.cre~
        ~override/stoned.cre~ ~bgtcre/stoned.cre~

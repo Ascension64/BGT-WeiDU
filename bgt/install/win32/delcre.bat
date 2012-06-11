@@ -328,7 +328,6 @@ del bg1cre\sleepdw.cre
 del bg1cre\sleepfh.cre
 del bg1cre\sleepmh.cre
 del bg1cre\squirr.cre
-del bg1cre\stalke.cre
 del bg1cre\tasloisu.cre
 del bg1cre\tethto2.cre
 del bg1cre\tethto3.cre
