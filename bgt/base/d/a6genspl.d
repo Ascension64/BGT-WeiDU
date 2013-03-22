@@ -17,7 +17,15 @@ Kit(LastTalkedToBy(), MAGESCHOOL_ILLUSIONIST)
 Kit(LastTalkedToBy(), MAGESCHOOL_INVOKER)
 Kit(LastTalkedToBy(), MAGESCHOOL_NECROMANCER)
 Kit(LastTalkedToBy(), MAGESCHOOL_TRANSMUTER)~ THEN DO ~SetGlobal("A6GenSpl2","LOCALS",-1) SetGlobal("A6GenSpl3","LOCALS",-1) SetGlobal("A6GenSpl4","LOCALS",-1) StartDialogNoSet(LastTalkedToBy())~ EXIT
-  IF ~Kit(LastTalkedToBy(),MAGESCHOOL_GENERALIST)~ THEN GOTO A6GenSpl_L2Normal
+  IF ~!Kit(LastTalkedToBy(), 0)
+!Kit(LastTalkedToBy(), MAGESCHOOL_ABJURER)
+!Kit(LastTalkedToBy(), MAGESCHOOL_CONJURER)
+!Kit(LastTalkedToBy(), MAGESCHOOL_DIVINER)
+!Kit(LastTalkedToBy(), MAGESCHOOL_ENCHANTER)
+!Kit(LastTalkedToBy(), MAGESCHOOL_ILLUSIONIST)
+!Kit(LastTalkedToBy(), MAGESCHOOL_INVOKER)
+!Kit(LastTalkedToBy(), MAGESCHOOL_NECROMANCER)
+!Kit(LastTalkedToBy(), MAGESCHOOL_TRANSMUTER)~ THEN GOTO A6GenSpl_L2Normal
 END
 
 IF ~Global("A6GenSpl2","LOCALS",-1)~ THEN BEGIN A6GenSpl_L2Special

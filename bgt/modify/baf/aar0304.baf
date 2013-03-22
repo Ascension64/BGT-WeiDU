@@ -3,14 +3,17 @@ IF
   Global("EdwinPartyBG1","GLOBAL",1)
 THEN
   RESPONSE #100
+    ActionOverride("Edwin",DestroyItem("BGMISC89")) // Edwin's amulet
     GiveItemCreate("CLCK14","Edwin",1,0,0) // Adventurer's Robe
     GiveItemCreate("DAGG01","Edwin",1,0,0) // Dagger
     GiveItemCreate("EDWINKEY","Edwin",1,0,0) // Mae'Var's Strongbox Key
+    GiveItemCreate("MISC89","Edwin",1,0,0) // Edwin's Amulet
     SmallWait(10)
     ActionOverride("Edwin",FillSlot(SLOT_ARMOR))
     ActionOverride("Edwin",FillSlot(SLOT_WEAPON))
-    GiveItemCreate("STAF01","Edwin",1,0,0) // Quarterstaff
+    ActionOverride("Edwin",FillSlot(SLOT_AMULET))
     SmallWait(10)
+    GiveItemCreate("STAF01","Edwin",1,0,0) // Quarterstaff
     ActionOverride("Edwin",EquipMostDamagingMelee())
     ActionOverride("Edwin",ChangeAIScript("Edwin",OVERRIDE))
     ActionOverride("Edwin",ChangeAIScript("wtarsgt",GENERAL))

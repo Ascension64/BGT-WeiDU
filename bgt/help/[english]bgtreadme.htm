@@ -890,8 +890,33 @@
         <a name="version" id="version"></a>
         <div class="content">
           <h2>Version history</h2>
-		  <p><a href="#" onclick="toggle('1.15');toggle('1.14');toggle('1.13');toggle('1.12');toggle('1.11');toggle('1.10');toggle('1.09');toggle('1.08u');toggle('1.08');toggle('1.07');toggle('1.06Updated'); toggle('1.06'); toggle('1.05b'); toggle('1.05a'); toggle('1.04'); toggle('1.03'); toggle('1.02f'); toggle('1.02'); toggle('1.01'); toggle('1.00'); toggle('0.99ZETAUpdated'); toggle('0.99ZETA'); toggle('0.99BETA4'); toggle('0.99BETA2'); toggle('0.99BETA'); toggle('0.94BETA'); toggle('0.9BETA'); toggle('0.8'); return false;">Expand/Collapse All</a></p>
-        <h6><a href="#" onclick="toggle('1.15'); return false;">Version 1.15 (11 Jun 12)</a></h6>
+		  <p><a href="#" onclick="toggle('1.16');toggle('1.15');toggle('1.14');toggle('1.13');toggle('1.12');toggle('1.11');toggle('1.10');toggle('1.09');toggle('1.08u');toggle('1.08');toggle('1.07');toggle('1.06Updated'); toggle('1.06'); toggle('1.05b'); toggle('1.05a'); toggle('1.04'); toggle('1.03'); toggle('1.02f'); toggle('1.02'); toggle('1.01'); toggle('1.00'); toggle('0.99ZETAUpdated'); toggle('0.99ZETA'); toggle('0.99BETA4'); toggle('0.99BETA2'); toggle('0.99BETA'); toggle('0.94BETA'); toggle('0.9BETA'); toggle('0.8'); return false;">Expand/Collapse All</a></p>
+        <h6><a href="#" onclick="toggle('1.16'); return false;">Version 1.16 (22 Mar 13)</a></h6>
+	      <div id="1.16" class="vlisthide">
+		  <p>Installation changes</p>
+		  <ul>
+		    <li>Corrected Russian translation so that prompts are shown properly in GUI and music setup</li>
+		    <li>Correction to comments in bgt/base/baf/aram00.baf</li>
+		    <li>The game executable is longer patched if TobEx is detected when selecting the "Full Baldur's Gate/Shadows of Amn/Throne of Bhaal Music" option of the "Baldur's Gate Trilogy - Music" optional install</li>
+		    <li>Tutorial strings about the whether entering the inventory screen pauses the game are no longer changed if the "Disable Force Inventory Pause" TobEx tweak is detected to be enabled</li>
+		    <li>Updated German translation</li>
+		  </ul>
+		  <p>Bug fixes</p>
+		  <ul>
+		    <li>Dire Charm traps encountered in the Baldur's Gate and Tales of the Sword Coast part of the game last for 120 seconds as per vanilla Baldur's Gate behaviour (was 48 seconds)</li>
+		    <li>Edwin now correctly receives a dagger if he is imported into Shadows of Amn</li>
+		    <li>Edwin's Amulet gives one bonus wizard spell per level instead of two in the Baldur's Gate and Tales of the Sword Coast part of the game (note: specific text for trying to remove his amulet will not show correctly until after the transition to Shadows of Amn)</li>
+		    <li>Fixed a compatibility issue with Refinements where starting a BG2 game with a true class Mage would prevent spell selection from working</li>
+		    <li>Fixed day-night and night-day movies not playing (Mac users only get the Shadows of Amn movies)</li>
+		    <li>Fixed game hang/crash in multiplayer due to invalid day-night and night-day movies</li>
+		    <li>Fixed QUEEN_CHANGE (SPWI942.SPL) so that Pawns in the chess game change to the correct Queen</li>
+		    <li>Kirinhale no longer gains magic resistance and regenerates hit points when she becomes Ethereal</li>
+		    <li>Kirinhale no longer gives male player characters a save vs. spells penalty when the target is inflicted with dire charm</li>
+		    <li>Magic missile traps encountered in the Baldur's Gate and Tales of the Sword Coast part of the game do 2D3 damage as per vanilla Baldur's Gate behaviour (was 1D4)</li>
+		    <li>Silver Dagger - Werebane now correctly gives the extra +3 THAC0 bonus vs. lycanthropes</li>
+		  </ul>
+              </div>
+          <h6><a href="#" onclick="toggle('1.15'); return false;">Version 1.15 (11 Jun 12)</a></h6>
 	      <div id="1.15" class="vlisthide">
 		  <p>Installation changes</p>
 		  <ul>
@@ -912,7 +937,7 @@
 		    <li>Fixed inventory icon for Algernon's Cloak a la BG2 Fixpack</li>
 		    <li>Fixed proficiency type in description of Two Handed Sword +3: World's Edge</li>
                   </ul>
-                  </div>
+              </div>
         <h6><a href="#" onclick="toggle('1.14'); return false;">Version 1.14 (28 Jan 12)</a></h6>
 	      <div id="1.14" class="vlisthide">
                   <p>Installation changes</p>

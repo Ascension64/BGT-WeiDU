@@ -1,7 +1,7 @@
 Help files available in the BGT\Help directory.
 -------------------------------------------------------------------------
 Baldur’s Gate Trilogy - WeiDU (BGT-WeiDU)
-Version 1.13 (22 Jan 12)
+Version 1.16 (22 Mar 13)
 [with permission from Bardez]
 
 IMPORTANT! All savegames of BGT-WeiDU version 1.12 or below are rendered incompatible with this update. You must start a new game.
@@ -42,7 +42,7 @@ AUTO-INSTALLATION (for expert users)
 Setup-BGT.exe --force-install 0 --skip-at-view --language X --args-list [flags] [path]
 
 Parameters:
-X - English (0), International English (1), Castilian/Spanish (2), French (3), German (4), Italian (5), Korean (6), Polish (7), Russian (8), Simplified Chinese (9), Traditional Chinese (10)
+X - English (0), International English (1), Castilian/Spanish (2), French (3), German (4), Italian (5), Korean (6), Polish (7), Russian (8), Simplified Chinese (9), Traditional Chinese (10), Czech (11)
 
 [flags]
 - suppress prompt for biffing option and biff all new resources (takes precedence over 'o' flag) (b or B)

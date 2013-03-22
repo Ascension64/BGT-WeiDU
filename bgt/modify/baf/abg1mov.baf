@@ -1,6 +1,6 @@
 IF
   Time(DUSK_END)
-  GlobalTimerExpired("A6Sunset","GLOBAL")
+  !GlobalTimerNotExpired("A6Sunset","GLOBAL")
 THEN
   RESPONSE #100
     StartMovie("BGSUNSET")
@@ -9,7 +9,7 @@ END
 
 IF
   Time(DAWN_END)
-  GlobalTimerExpired("A6Sunrise","GLOBAL")
+  !GlobalTimerNotExpired("A6Sunrise","GLOBAL")
 THEN
   RESPONSE #100
     StartMovie("BGSUNRIS")

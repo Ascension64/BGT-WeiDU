@@ -73,7 +73,7 @@ LANGUAGE ~Polski (Polish)~
          ~bgt/language/polish/prompts.tra~
 LANGUAGE ~ê„··™®© (Russian)~
          ~russian~
-         ~bgt/language/russian/prompts-%WEIDU_OS%.tra~
+         ~bgt/language/russian/prompts.tra~
 LANGUAGE ~ºÚÃÂ÷–Œƒ (Chinese - Simplified)~
          ~schinese~
          ~bgt/language/schinese/prompts-%WEIDU_OS%.tra~
@@ -1188,29 +1188,33 @@ OUTER_PATCH_SAVE patch_bytes_4 ~~ BEGIN
     WRITE_LONG   0x198 0xfffdfc3c
 END
 
-COPY ~bgmain.exe~ ~bgmain.exe~
-    READ_ASCII 0x000cc6f7 target_bytes_1 ELSE 0 (0x42)
-    READ_ASCII 0x000d40ef target_bytes_2 ELSE 0 (0x611)
-    READ_ASCII 0x000d4892 target_bytes_3 ELSE 0 (0x10)
-    READ_ASCII 0x005e20b4 target_bytes_4 ELSE 0 (0x19c)
-    PATCH_IF (~%target_bytes_1%~ STRING_EQUAL ~%orig_bytes_1%~)
-         AND (~%target_bytes_2%~ STRING_EQUAL ~%orig_bytes_2%~)
-         AND (~%target_bytes_3%~ STRING_EQUAL ~%orig_bytes_3%~)
-         AND (~%target_bytes_4%~ STRING_EQUAL ~%orig_bytes_4%~)
-    THEN BEGIN
-       WRITE_ASCIIE 0x000cc6f7 ~%patch_bytes_1%~ (0x42)
-       WRITE_ASCIIE 0x000d40ef ~%patch_bytes_2%~ (0x611)
-       WRITE_ASCIIE 0x000d4892 ~%patch_bytes_3%~ (0x10)
-       WRITE_ASCIIE 0x005e20b4 ~%patch_bytes_4%~ (0x19c)
-    END ELSE
-    PATCH_IF (~%target_bytes_1%~ STRING_EQUAL ~%patch_bytes_1%~)
-         AND (~%target_bytes_2%~ STRING_EQUAL ~%patch_bytes_2%~)
-         AND (~%target_bytes_3%~ STRING_EQUAL ~%patch_bytes_3%~)
-         AND (~%target_bytes_4%~ STRING_EQUAL ~%patch_bytes_4%~)
-    THEN BEGIN
-        PATCH_PRINT ~bgmain.exe: patch already applied. Skipping...~
-    END ELSE INNER_ACTION BEGIN FAIL ~bgmain.exe: Target bytes do not match.~ END
-BUT_ONLY
+ACTION_IF NOT (FILE_EXISTS "TobEx_ini/TobExVer.txt") BEGIN
+  COPY ~bgmain.exe~ ~bgmain.exe~
+      READ_ASCII 0x000cc6f7 target_bytes_1 ELSE 0 (0x42)
+      READ_ASCII 0x000d40ef target_bytes_2 ELSE 0 (0x611)
+      READ_ASCII 0x000d4892 target_bytes_3 ELSE 0 (0x10)
+      READ_ASCII 0x005e20b4 target_bytes_4 ELSE 0 (0x19c)
+      PATCH_IF (~%target_bytes_1%~ STRING_EQUAL ~%orig_bytes_1%~)
+           AND (~%target_bytes_2%~ STRING_EQUAL ~%orig_bytes_2%~)
+           AND (~%target_bytes_3%~ STRING_EQUAL ~%orig_bytes_3%~)
+           AND (~%target_bytes_4%~ STRING_EQUAL ~%orig_bytes_4%~)
+      THEN BEGIN
+         WRITE_ASCIIE 0x000cc6f7 ~%patch_bytes_1%~ (0x42)
+         WRITE_ASCIIE 0x000d40ef ~%patch_bytes_2%~ (0x611)
+         WRITE_ASCIIE 0x000d4892 ~%patch_bytes_3%~ (0x10)
+         WRITE_ASCIIE 0x005e20b4 ~%patch_bytes_4%~ (0x19c)
+      END ELSE
+      PATCH_IF (~%target_bytes_1%~ STRING_EQUAL ~%patch_bytes_1%~)
+           AND (~%target_bytes_2%~ STRING_EQUAL ~%patch_bytes_2%~)
+           AND (~%target_bytes_3%~ STRING_EQUAL ~%patch_bytes_3%~)
+           AND (~%target_bytes_4%~ STRING_EQUAL ~%patch_bytes_4%~)
+      THEN BEGIN
+          PATCH_PRINT ~bgmain.exe: patch already applied. Skipping...~
+      END ELSE INNER_ACTION BEGIN FAIL ~bgmain.exe: Target bytes do not match.~ END
+  BUT_ONLY
+END ELSE BEGIN
+  PRINT ~bgmain.exe: TobEx installation detected. Skipping .exe patch...~
+END
 
 COPY_EXISTING ~songlist.2da~ ~override/songlist.2da~
   SET_2DA_ENTRY 33 2 3 ~BGTheme.mus~

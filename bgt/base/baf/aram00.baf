@@ -232,7 +232,7 @@ THEN
 END
 
 IF
-  PartyHasItem("helm07")  // Moonblade
+  PartyHasItem("helm07")  // Helm of Balduran
   Global("IHaveBalduran","GLOBAL",0)
 THEN
   RESPONSE #100
@@ -241,7 +241,7 @@ THEN
 END
 
 IF
-  PartyHasItem("sw1h13")  // Helm of Balduran
+  PartyHasItem("sw1h13")  // Moonblade
   Global("IHaveMoonblade","GLOBAL",0)
 THEN
   RESPONSE #100

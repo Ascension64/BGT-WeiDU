@@ -21,7 +21,7 @@ BACKUP ~bgt/backup~
 
 AUTHOR ~http://forums.spellholdstudios.net/index.php?showforum=261~
 
-VERSION ~1.15 (11 Jun 12)~
+VERSION ~1.16 (22 Mar 13)~
 
 README ~bgt/help/[%LANGUAGE%]bgtreadme.htm~ ~bgt/help/[english]bgtreadme.htm~
 
@@ -620,7 +620,12 @@ ACTION_IF FILE_EXISTS ~bgt/install/%LANGUAGE%/bg1.tra~ BEGIN
   COPY ~bgt/install/%LANGUAGE%/bg1.tra~ ~bgt/install/%LANGUAGE%/bg1.tra~
     PATCH_INCLUDE ~bgt/include/tra_update.tpp~
     PATCH_IF ("%LANGUAGE%" STRING_EQUAL ~english~) BEGIN
-      PATCH_INCLUDE ~bgt/include/tra_mod_eng.tpp~
+      PATCH_IF NOT (FILE_EXISTS "TobEx_ini/TobExVer.txt") OR
+               NOT (FILE_EXISTS "TobEx_ini/TobExTweak.ini") OR
+               NOT (FILE_CONTAINS "TobEx_ini/TobExTweak.ini" "Engine:Disable Force Inventory Pause=0")
+      BEGIN
+        PATCH_INCLUDE ~bgt/include/tra_mod_eng.tpp~
+      END
     END
     SET tra_updated = 1
 
@@ -632,8 +637,21 @@ ACTION_IF
 THEN BEGIN
   COPY + ~bgt/bg1.tra~ ~bgt/bg1.tra~
     PATCH_INCLUDE ~bgt/include/tra_update.tpp~
+    PATCH_IF ("%LANGUAGE%" STRING_EQUAL ~german~) BEGIN
+      PATCH_IF NOT (FILE_EXISTS "TobEx_ini/TobExVer.txt") OR
+               NOT (FILE_EXISTS "TobEx_ini/TobExTweak.ini") OR
+               NOT (FILE_CONTAINS "TobEx_ini/TobExTweak.ini" "Engine:Disable Force Inventory Pause=0")
+      BEGIN
+        PATCH_INCLUDE ~bgt/include/tra_mod_ger.tpp~
+      END
+    END
     PATCH_IF ("%LANGUAGE%" STRING_EQUAL ~international~) BEGIN
-      PATCH_INCLUDE ~bgt/include/tra_mod_eng.tpp~
+      PATCH_IF NOT (FILE_EXISTS "TobEx_ini/TobExVer.txt") OR
+               NOT (FILE_EXISTS "TobEx_ini/TobExTweak.ini") OR
+               NOT (FILE_CONTAINS "TobEx_ini/TobExTweak.ini" "Engine:Disable Force Inventory Pause=0")
+      BEGIN
+        PATCH_INCLUDE ~bgt/include/tra_mod_eng.tpp~
+      END
     END
 
     PATCH_IF (( ~%LANGUAGE%~ STRING_COMPARE_CASE ~french~ ) = 0) BEGIN
@@ -2097,6 +2115,12 @@ COPY_EXISTING ~kaisha.bcs~ ~override/kaisha.bcs~
   REPLACE_TEXTUALLY ~ForceSpell(Myself,KAISHAS_CHANGE)~ ~ForceSpellRES("BGWI925",Myself)~
   COMPILE_BAF_TO_BCS
 
+COPY_EXISTING ~kirinh.bcs~ ~override/kirinh.bcs~
+  DECOMPILE_BCS_TO_BAF
+  REPLACE_TEXTUALLY ~ForceSpell(Myself,SUCCUBUS_ETHEREAL)~ ~ForceSpellRES("BGWI927",Myself)~
+  REPLACE_TEXTUALLY ~ForceSpell(\[PC\.0\.0\.0\.0\.MALE\],SUCCUBUS_CHARM_MALE)~ ~ForceSpellRES("BGWI930",[PC.0.0.0.0.MALE])~
+  COMPILE_BAF_TO_BCS
+
 COPY_EXISTING ~mtowbaz.bcs~ ~override/mtowbaz.bcs~
   EXTEND_BOTTOM ~mtowbaz.bcs~ ~bgt/modify/baf/amtowbaz.baf~
 
@@ -2675,7 +2699,7 @@ COPY_EXISTING ~clck08.itm~ ~override/clck08.itm~
   WRITE_SHORT ("%abil_off%" + 0x30) 33 //Ability animation thrust %
 
   READ_SHORT 0x70 fx_global_num
-  
+
   SET fx_total_num = %fx_global_num%
 
   FOR (i = 0; i < "%abil_num%"; i += 1) BEGIN
@@ -3515,6 +3539,8 @@ COPY ~bgt/modify/itm/misc79.itm~ ~override/bgmisc79.itm~
   SAY NAME2 @17308
   SAY UNIDENTIFIED_DESC @19344
   WRITE_LONG 0x4c 130 //set weight as per BG1
+
+COPY ~bgt/modify/itm/misc89.itm~ ~override/bgmisc89.itm~
 
 COPY ~bgt/modify/itm/ring08.itm~ ~override/bgring08.itm~
   READ_BYTE 0x21 flags
@@ -6878,11 +6904,78 @@ ACTION_IF FILE_EXISTS ~bgmain.exe~ BEGIN
       END
     END
 
-    //Movie fix
-    REPLACE_TEXTUALLY ~DAYNITE~ "" (8)
-    REPLACE_TEXTUALLY ~NITEDAY~ "" (8)
+    //Disable hard-coded day-night movies
+    SET found = 0
 
+    INNER_PATCH_SAVE orig_bytes_1 ~~ BEGIN
+      INSERT_BYTES 0x0 0x6
+      WRITE_LONG   0x0 0x011e840f
+      WRITE_SHORT  0x4 0x0000
+    END
+
+    INNER_PATCH_SAVE patch_bytes_1 ~~ BEGIN
+      INSERT_BYTES 0x0 0x6
+      WRITE_LONG   0x0 0x00011fe9
+      WRITE_SHORT  0x4 0x9000
+    END
+
+    INNER_PATCH_SAVE orig_bytes_2 ~~ BEGIN
+      INSERT_BYTES 0x0 0x6
+      WRITE_LONG   0x0 0x00cd840f
+      WRITE_SHORT  0x4 0x0000
+    END
+
+    INNER_PATCH_SAVE patch_bytes_2 ~~ BEGIN
+      INSERT_BYTES 0x0 0x6
+      WRITE_LONG   0x0 0x0000cee9
+      WRITE_SHORT  0x4 0x9000
+    END
+
+    READ_ASCII 0x002ccca8 target_bytes_1 ELSE 0 (0x6)
+    READ_ASCII 0x002cd401 target_bytes_2 ELSE 0 (0x6)
+    PATCH_IF (~%target_bytes_1%~ STRING_EQUAL ~%orig_bytes_1%~)
+         AND (~%target_bytes_2%~ STRING_EQUAL ~%orig_bytes_2%~)
+    THEN BEGIN
+       SET found = 1
+       WRITE_ASCIIE 0x002ccca8 ~%patch_bytes_1%~ (0x6)
+       WRITE_ASCIIE 0x002cd401 ~%patch_bytes_2%~ (0x6)
+    END ELSE
+    PATCH_IF (~%target_bytes_1%~ STRING_EQUAL ~%patch_bytes_1%~)
+         AND (~%target_bytes_2%~ STRING_EQUAL ~%patch_bytes_2%~)
+    THEN BEGIN
+        SET found = 1
+        PATCH_PRINT ~bgmain.exe: disable day/night movie patch already applied.~
+    END ELSE INNER_ACTION BEGIN WARN ~bgmain.exe: Target bytes do not match.~
+    END
   BUT_ONLY_IF_IT_CHANGES
+
+  ACTION_IF (%found% = 1) BEGIN
+    //BG1
+    EXTEND_BOTTOM ~ar7200.bcs~ ~bgt/modify/baf/abg1mov.baf~
+    EXTEND_BOTTOM ~ar7300.bcs~ ~bgt/modify/baf/abg1mov.baf~
+    EXTEND_BOTTOM ~ar7400.bcs~ ~bgt/modify/baf/abg1mov.baf~
+    EXTEND_BOTTOM ~ar7600.bcs~ ~bgt/modify/baf/abg1mov.baf~
+    EXTEND_BOTTOM ~ar7700.bcs~ ~bgt/modify/baf/abg1mov.baf~
+    EXTEND_BOTTOM ~ar7800.bcs~ ~bgt/modify/baf/abg1mov.baf~
+    EXTEND_BOTTOM ~ar8000.bcs~ ~bgt/modify/baf/abg1mov.baf~
+    EXTEND_BOTTOM ~ar8100.bcs~ ~bgt/modify/baf/abg1mov.baf~
+    EXTEND_BOTTOM ~ar8200.bcs~ ~bgt/modify/baf/abg1mov.baf~
+
+    //BG2
+    EXTEND_BOTTOM ~ar0020.bcs~ ~bgt/modify/baf/abg2mov.baf~
+    EXTEND_BOTTOM ~ar0041.bcs~ ~bgt/modify/baf/abg2mov.baf~
+    EXTEND_BOTTOM ~ar0045.bcs~ ~bgt/modify/baf/abg2mov.baf~
+    EXTEND_BOTTOM ~ar0046.bcs~ ~bgt/modify/baf/abg2mov.baf~
+    EXTEND_BOTTOM ~ar0300.bcs~ ~bgt/modify/baf/abg2mov.baf~
+    EXTEND_BOTTOM ~ar0400.bcs~ ~bgt/modify/baf/abg2mov.baf~
+    EXTEND_BOTTOM ~ar0500.bcs~ ~bgt/modify/baf/abg2mov.baf~
+    EXTEND_BOTTOM ~ar0700.bcs~ ~bgt/modify/baf/abg2mov.baf~
+    EXTEND_BOTTOM ~ar0900.bcs~ ~bgt/modify/baf/abg2mov.baf~
+    EXTEND_BOTTOM ~ar1000.bcs~ ~bgt/modify/baf/abg2mov.baf~
+    EXTEND_BOTTOM ~ar1400.bcs~ ~bgt/modify/baf/abg2mov.baf~
+    EXTEND_BOTTOM ~ar2000.bcs~ ~bgt/modify/baf/abg2mov.baf~
+    EXTEND_BOTTOM ~ar2800.bcs~ ~bgt/modify/baf/abg2mov.baf~
+  END
 END ELSE ACTION_IF FILE_EXISTS ~Baldur's Gate II~ BEGIN //Mac
   COPY ~Baldur's Gate II~ ~Baldur's Gate II~
     PATCH_IF %SOURCE_SIZE% != 0xBA8D1A BEGIN
@@ -6893,13 +6986,6 @@ END ELSE ACTION_IF FILE_EXISTS ~Baldur's Gate II~ BEGIN //Mac
         READ_LONG off test
         PATCH_IF test == oldexp BEGIN
           WRITE_LONG off 0x01000000 //big endian for 1
-
-          INNER_PATCH_SAVE null ~daynite~ BEGIN
-            FOR (i = 0; i < 7; ++i) BEGIN
-              WRITE_BYTE i 1
-            END
-          END
-          REPLACE_TEXTUALLY CASE_INSENSITIVE EVALUATE_REGEXP ~\(daynite\|niteday\)~ ~%null%~
         END ELSE BEGIN
           PATCH_WARN ~Executable appears to have been altered by some other mod. SKIPPING patch...~
         END
@@ -6909,32 +6995,6 @@ END ELSE ACTION_IF FILE_EXISTS ~Baldur's Gate II~ BEGIN //Mac
 END ELSE ACTION_IF warn BEGIN
   WARN ~WARNING: Unable to implement experience patch.~
 END
-
-//BG1
-EXTEND_BOTTOM ~ar7200.bcs~ ~bgt/modify/baf/abg1mov.baf~
-EXTEND_BOTTOM ~ar7300.bcs~ ~bgt/modify/baf/abg1mov.baf~
-EXTEND_BOTTOM ~ar7400.bcs~ ~bgt/modify/baf/abg1mov.baf~
-EXTEND_BOTTOM ~ar7600.bcs~ ~bgt/modify/baf/abg1mov.baf~
-EXTEND_BOTTOM ~ar7700.bcs~ ~bgt/modify/baf/abg1mov.baf~
-EXTEND_BOTTOM ~ar7800.bcs~ ~bgt/modify/baf/abg1mov.baf~
-EXTEND_BOTTOM ~ar8000.bcs~ ~bgt/modify/baf/abg1mov.baf~
-EXTEND_BOTTOM ~ar8100.bcs~ ~bgt/modify/baf/abg1mov.baf~
-EXTEND_BOTTOM ~ar8200.bcs~ ~bgt/modify/baf/abg1mov.baf~
-
-//BG2
-EXTEND_BOTTOM ~ar0020.bcs~ ~bgt/modify/baf/abg2mov.baf~
-EXTEND_BOTTOM ~ar0041.bcs~ ~bgt/modify/baf/abg2mov.baf~
-EXTEND_BOTTOM ~ar0045.bcs~ ~bgt/modify/baf/abg2mov.baf~
-EXTEND_BOTTOM ~ar0046.bcs~ ~bgt/modify/baf/abg2mov.baf~
-EXTEND_BOTTOM ~ar0300.bcs~ ~bgt/modify/baf/abg2mov.baf~
-EXTEND_BOTTOM ~ar0400.bcs~ ~bgt/modify/baf/abg2mov.baf~
-EXTEND_BOTTOM ~ar0500.bcs~ ~bgt/modify/baf/abg2mov.baf~
-EXTEND_BOTTOM ~ar0700.bcs~ ~bgt/modify/baf/abg2mov.baf~
-EXTEND_BOTTOM ~ar0900.bcs~ ~bgt/modify/baf/abg2mov.baf~
-EXTEND_BOTTOM ~ar1000.bcs~ ~bgt/modify/baf/abg2mov.baf~
-EXTEND_BOTTOM ~ar1400.bcs~ ~bgt/modify/baf/abg2mov.baf~
-EXTEND_BOTTOM ~ar2000.bcs~ ~bgt/modify/baf/abg2mov.baf~
-EXTEND_BOTTOM ~ar2800.bcs~ ~bgt/modify/baf/abg2mov.baf~
 
 ////////////////////////////////////////////////////////
 //Fixpack
@@ -7496,6 +7556,13 @@ STRING_SET ~12850~ @12850 //"Oberan" -> "Oberon"
 //hardcoded
 
 //////////////////////////////////////////////////////////////////
+//Effects
+//////////////////////////////////////////////////////////////////
+
+COPY_EXISTING ~lycnhit3.eff~ ~override/lycnhit3.eff~
+  WRITE_SHORT 0x2c 100 //probabilityHigh
+
+//////////////////////////////////////////////////////////////////
 //Items
 //////////////////////////////////////////////////////////////////
 
@@ -7787,6 +7854,31 @@ COPY_EXISTING ~spwi003.spl~ ~override/spwi003.spl~
      END
    END
  END
+
+//QUEEN_CHANGE
+COPY_EXISTING ~spwi942.spl~ ~override/spwi942.spl~
+ READ_LONG 0x64 abil_off
+ READ_SHORT 0x68 abil_num
+ READ_LONG 0x6a fx_off
+ READ_SHORT 0x70 fx_global_num
+
+ SET fx_total_num = %fx_global_num%
+
+ FOR (i = 0; i < "%abil_num%"; i += 1) BEGIN
+  READ_SHORT (%abil_off% + %i% * 0x38 + 0x1E) fx_abil_num
+  SET fx_total_num += %fx_abil_num%
+ END
+
+ FOR (i = 0; i < "%fx_total_num%"; i += 1) BEGIN
+   READ_SHORT ("%fx_off%" + 0x30 * %i%) fx_type
+   PATCH_IF ("%fx_type%" = 151) BEGIN //Type: Replace Self
+     READ_ASCII ("%fx_off%" + 0x30 * %i% + 0x14) fx_resref
+     PATCH_IF ("%fx_resref%" STRING_EQUAL_CASE "QUEEN") BEGIN
+       WRITE_ASCII ("%fx_off%" + 0x30 * %i% + 0x14) "BGQUEEN" (8)
+     END
+   END
+ END
+BUT_ONLY
 
 //Detect Evil description fix
 <<<<<<<<bgt/string.txt
@@ -8185,7 +8277,7 @@ LANGUAGE ~Polski (Polish)~
          ~bgt/language/polish/prompts.tra~
 LANGUAGE ~ãááª¨© (Russian)~
          ~russian~
-         ~bgt/language/russian/prompts-%WEIDU_OS%.tra~
+         ~bgt/language/russian/prompts.tra~
 LANGUAGE ~¼òÌåÖÐÎÄ (Chinese - Simplified)~
          ~schinese~
          ~bgt/language/schinese/prompts-%WEIDU_OS%.tra~
@@ -8322,7 +8414,7 @@ LANGUAGE ~Polski (Polish)~
          ~bgt/language/polish/prompts.tra~
 LANGUAGE ~ãááª¨© (Russian)~
          ~russian~
-         ~bgt/language/russian/prompts-%WEIDU_OS%.tra~
+         ~bgt/language/russian/prompts.tra~
 LANGUAGE ~¼òÌåÖÐÎÄ (Chinese - Simplified)~
          ~schinese~
          ~bgt/language/schinese/prompts-%WEIDU_OS%.tra~

@@ -721,6 +721,7 @@ MOVE + ~override/davaeorn.bcs~ ~bg1bcs/davaeorn.bcs~
        ~override/kaldran.bcs~ ~bg1bcs/kaldran.bcs~
        ~override/kescape.bcs~ ~bg1bcs/kescape.bcs~
        ~override/khalid.bcs~ ~bg1bcs/khalid.bcs~
+       ~override/kirinh.bcs~ ~bg1bcs/kirinh.bcs~
        ~override/kivan.bcs~ ~bg1bcs/kivan.bcs~
        ~override/larys.bcs~ ~bg1bcs/larys.bcs~
        ~override/leavech7.bcs~ ~bg1bcs/leavech7.bcs~
@@ -3234,6 +3235,7 @@ MOVE + ~override/amul18.itm~ ~bg1itm/amul18.itm~
        ~override/bgmisc56.itm~ ~bg1itm/bgmisc56.itm~
        ~override/bgmisc79.itm~ ~bg1itm/bgmisc79.itm~
        ~override/bgmisc83.itm~ ~bg1itm/bgmisc83.itm~
+       ~override/bgmisc89.itm~ ~bg1itm/bgmisc89.itm~
        ~override/bgpotn14.itm~ ~bg1itm/bgpotn14.itm~
        ~override/bgring08.itm~ ~bg1itm/bgring08.itm~
        ~override/bgring12.itm~ ~bg1itm/bgring12.itm~
@@ -3444,13 +3446,17 @@ MOVE + ~override/a6spw201.spl~ ~bg1spl/a6spw201.spl~
        ~override/bglive.spl~ ~bg1spl/bglive.spl~
        ~override/bgmag65.spl~ ~bg1spl/bgmag65.spl~
        ~override/bgmiport.spl~ ~bg1spl/bgmiport.spl~
+       ~override/bgpr982.spl~ ~bg1spl/bgpr982.spl~
        ~override/bgsilenc.spl~ ~bg1spl/bgsilenc.spl~
        ~override/bgsleep.spl~ ~bg1spl/bgsleep.spl~
        ~override/bgsleepp.spl~ ~bg1spl/bgsleepp.spl~
        ~override/bgstr10.spl~ ~bg1spl/bgstr10.spl~
        ~override/bgtersus.spl~ ~bg1spl/bgtersus.spl~
        ~override/bgviport.spl~ ~bg1spl/bgviport.spl~
+       ~override/bgwi003.spl~ ~bg1spl/bgwi003.spl~
        ~override/bgwi925.spl~ ~bg1spl/bgwi925.spl~
+       ~override/bgwi927.spl~ ~bg1spl/bgwi927.spl~
+       ~override/bgwi930.spl~ ~bg1spl/bgwi930.spl~
        ~override/bgwi947.spl~ ~bg1spl/bgwi947.spl~
        ~override/bgwis10.spl~ ~bg1spl/bgwis10.spl~
        ~override/bgwis18.spl~ ~bg1spl/bgwis18.spl~
@@ -3531,6 +3537,7 @@ MOVE + ~override/bgintro.2da~ ~bg1misc/bgintro.2da~
        ~override/ssiwm.bam~ ~bg1misc/ssiwm.bam~
        ~override/bgtcred.bmp~ ~bg1misc/bgtcred.bmp~
        ~override/mbas_gr.bmp~ ~bg1misc/mbas_gr.bmp~
+       ~override/lycnhit3.eff~ ~bg1misc/lycnhit3.eff~
 
 ACTION_IF FILE_EXISTS ~override/bpbgtmap.bam~ BEGIN //Compatibility with Worldmap mod
   MOVE + ~override/bpbgtmap.bam~ ~bg1misc/bpbgtmap.bam~
