@@ -21,7 +21,7 @@ BACKUP ~bgt/backup~
 
 AUTHOR ~http://forums.spellholdstudios.net/index.php?showforum=261~
 
-VERSION ~1.16 (22 Mar 13)~
+VERSION ~1.17 (10 Apr 13)~
 
 README ~bgt/help/[%LANGUAGE%]bgtreadme.htm~ ~bgt/help/[english]bgtreadme.htm~
 
@@ -622,7 +622,7 @@ ACTION_IF FILE_EXISTS ~bgt/install/%LANGUAGE%/bg1.tra~ BEGIN
     PATCH_IF ("%LANGUAGE%" STRING_EQUAL ~english~) BEGIN
       PATCH_IF NOT (FILE_EXISTS "TobEx_ini/TobExVer.txt") OR
                NOT (FILE_EXISTS "TobEx_ini/TobExTweak.ini") OR
-               NOT (FILE_CONTAINS "TobEx_ini/TobExTweak.ini" "Engine:Disable Force Inventory Pause=0")
+               NOT (FILE_CONTAINS "TobEx_ini/TobExTweak.ini" "Engine:Disable Force Inventory Pause=1")
       BEGIN
         PATCH_INCLUDE ~bgt/include/tra_mod_eng.tpp~
       END
@@ -640,7 +640,7 @@ THEN BEGIN
     PATCH_IF ("%LANGUAGE%" STRING_EQUAL ~german~) BEGIN
       PATCH_IF NOT (FILE_EXISTS "TobEx_ini/TobExVer.txt") OR
                NOT (FILE_EXISTS "TobEx_ini/TobExTweak.ini") OR
-               NOT (FILE_CONTAINS "TobEx_ini/TobExTweak.ini" "Engine:Disable Force Inventory Pause=0")
+               NOT (FILE_CONTAINS "TobEx_ini/TobExTweak.ini" "Engine:Disable Force Inventory Pause=1")
       BEGIN
         PATCH_INCLUDE ~bgt/include/tra_mod_ger.tpp~
       END
@@ -6992,7 +6992,7 @@ END ELSE ACTION_IF FILE_EXISTS ~Baldur's Gate II~ BEGIN //Mac
       END
     END
   BUT_ONLY
-END ELSE ACTION_IF warn BEGIN
+END ELSE ACTION_IF warn_exe BEGIN
   WARN ~WARNING: Unable to implement experience patch.~
 END
 
