@@ -1,7 +1,7 @@
 Help files available in the BGT\Help directory.
 -------------------------------------------------------------------------
 Baldur’s Gate Trilogy - WeiDU (BGT-WeiDU)
-Version 1.17 (10 Apr 13)
+Version 1.18 (28 Apr 13)
 [with permission from Bardez]
 
 IMPORTANT! All savegames of BGT-WeiDU version 1.12 or below are rendered incompatible with this update. You must start a new game.

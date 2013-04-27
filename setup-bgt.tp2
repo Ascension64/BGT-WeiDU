@@ -21,7 +21,7 @@ BACKUP ~bgt/backup~
 
 AUTHOR ~http://forums.spellholdstudios.net/index.php?showforum=261~
 
-VERSION ~1.17 (10 Apr 13)~
+VERSION ~1.18 (28 Apr 13)~
 
 README ~bgt/help/[%LANGUAGE%]bgtreadme.htm~ ~bgt/help/[english]bgtreadme.htm~
 
@@ -648,7 +648,7 @@ THEN BEGIN
     PATCH_IF ("%LANGUAGE%" STRING_EQUAL ~international~) BEGIN
       PATCH_IF NOT (FILE_EXISTS "TobEx_ini/TobExVer.txt") OR
                NOT (FILE_EXISTS "TobEx_ini/TobExTweak.ini") OR
-               NOT (FILE_CONTAINS "TobEx_ini/TobExTweak.ini" "Engine:Disable Force Inventory Pause=0")
+               NOT (FILE_CONTAINS "TobEx_ini/TobExTweak.ini" "Engine:Disable Force Inventory Pause=1")
       BEGIN
         PATCH_INCLUDE ~bgt/include/tra_mod_eng.tpp~
       END
